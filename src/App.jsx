@@ -130,6 +130,12 @@ const Icons = {
       <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
       <path d="M18 2H6v7a6 6 0 0012 0V2z" />
     </svg>
+  ),
+  ArrowUp: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 19V5" />
+      <polyline points="5 12 12 5 19 12" />
+    </svg>
   )
 }
 
@@ -296,6 +302,51 @@ function useReveal() {
 function Navigation() {
   const isScrolled = useScrolled()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
+
+  useEffect(() => {
+    const sections = NAV_LINKS
+      .map(link => document.querySelector(link.href))
+      .filter(Boolean)
+
+    if (!sections.length) {
+      return undefined
+    }
+
+    let sectionData = []
+    const updateSectionData = () => {
+      sectionData = sections
+        .map(section => ({ id: `#${section.id}`, top: section.offsetTop }))
+        .sort((a, b) => a.top - b.top)
+    }
+
+    const handleScroll = () => {
+      if (!sectionData.length) return
+      const scrollPos = window.scrollY + 140
+      let current = ''
+      sectionData.forEach(section => {
+        if (scrollPos >= section.top) {
+          current = section.id
+        }
+      })
+      setActiveSection(current)
+    }
+
+    const handleResize = () => {
+      updateSectionData()
+      handleScroll()
+    }
+
+    updateSectionData()
+    handleScroll()
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   return (
     <nav className={`nav ${isScrolled ? 'nav--scrolled' : ''}`}>
@@ -307,7 +358,7 @@ function Navigation() {
             <a
               key={link.href}
               href={link.href}
-              className="nav__link"
+              className={`nav__link ${activeSection === link.href ? 'nav__link--active' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               {link.label}
@@ -358,6 +409,21 @@ function Navigation() {
 function Hero() {
   return (
     <section className="hero" id="hero">
+      <div className="hero__constellation" aria-hidden="true">
+        <span className="constellation-line line--1" />
+        <span className="constellation-line line--2" />
+        <span className="constellation-line line--3" />
+        <span className="constellation-line line--4" />
+        <span className="constellation-line line--5" />
+
+        <span className="constellation-node node--primary" />
+        <span className="constellation-node node--1" />
+        <span className="constellation-node node--2" />
+        <span className="constellation-node node--3" />
+        <span className="constellation-node node--4" />
+        <span className="constellation-node node--5" />
+        <span className="constellation-node node--6" />
+      </div>
       <div className="container">
         <div className="hero__content hero__content--center">
           <div className="hero__badge animate-fadeInUp">
@@ -580,7 +646,7 @@ function Skills() {
           Skills & <span className="gradient-text">Technologies</span>
         </h2>
         <p className="section-subtitle reveal">
-          Technologies and tools I use to bring ideas to life.
+          Technologies and tools I have experience with.
         </p>
 
         <div className="skills__categories">
@@ -678,6 +744,24 @@ function Footer() {
 }
 
 // =============================================================================
+// BACK TO TOP BUTTON
+// =============================================================================
+
+function BackToTop() {
+  const isVisible = useScrolled(300)
+
+  return (
+    <a
+      href="#hero"
+      className={`back-to-top ${isVisible ? 'back-to-top--visible' : ''}`}
+      aria-label="Back to top"
+    >
+      <Icons.ArrowUp />
+    </a>
+  )
+}
+
+// =============================================================================
 // MAIN APP COMPONENT
 // =============================================================================
 
@@ -692,6 +776,7 @@ function App() {
         <Skills />
         <Contact />
       </main>
+      <BackToTop />
       <Footer />
     </>
   )
