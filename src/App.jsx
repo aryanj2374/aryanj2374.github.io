@@ -426,10 +426,6 @@ function Hero() {
       </div>
       <div className="container">
         <div className="hero__content hero__content--center">
-          <div className="hero__badge animate-fadeInUp">
-            Open to Opportunities
-          </div>
-
           <h1 className="hero__name animate-fadeInUp delay-100">
             {PERSONAL_INFO.name}
           </h1>
