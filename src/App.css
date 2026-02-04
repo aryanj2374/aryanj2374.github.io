@@ -67,6 +67,17 @@
   border: 1px solid rgba(99, 102, 241, 0.25);
 }
 
+.nav__link--cta {
+  color: var(--color-text-primary);
+  background: rgba(99, 102, 241, 0.16);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.nav__link--cta:hover {
+  background: rgba(99, 102, 241, 0.24);
+  border-color: rgba(99, 102, 241, 0.45);
+}
+
 .nav__socials {
   display: flex;
   align-items: center;

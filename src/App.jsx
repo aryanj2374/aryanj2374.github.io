@@ -150,7 +150,8 @@ const PERSONAL_INFO = {
   tagline: 'Building practical tools, agentic workflows, and software that solves real-world problems.',
   email: 'aryanj@berkeley.edu',
   github: 'https://github.com/aryanj2374',
-  linkedin: 'https://linkedin.com/in/aryanjain0'
+  linkedin: 'https://linkedin.com/in/aryanjain0',
+  resume: '/AryanJainResume.pdf'
 }
 
 const PROJECTS = [
@@ -364,6 +365,15 @@ function Navigation() {
               {link.label}
             </a>
           ))}
+          <a
+            href={PERSONAL_INFO.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav__link nav__link--cta"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Resume
+          </a>
         </div>
 
         <div className="nav__socials">
