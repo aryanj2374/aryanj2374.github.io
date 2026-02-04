@@ -96,6 +96,40 @@ const Icons = {
       <line x1="8" y1="2" x2="8" y2="6" />
       <line x1="3" y1="10" x2="21" y2="10" />
     </svg>
+  ),
+  MessageCircle: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+    </svg>
+  ),
+  TrendingUp: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+      <polyline points="17 6 23 6 23 12" />
+    </svg>
+  ),
+  Telescope: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 4l6 6-8 8-6-6 8-8z" />
+      <path d="M14 4L4 14" />
+      <path d="M9.5 8.5L4 14l2 6 6-2" />
+      <circle cx="6" cy="18" r="2" />
+    </svg>
+  ),
+  Zap: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  ),
+  Trophy: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
+      <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
+      <path d="M4 22h16" />
+      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+      <path d="M18 2H6v7a6 6 0 0012 0V2z" />
+    </svg>
   )
 }
 
@@ -128,7 +162,7 @@ const PROJECTS = [
     description: 'Built a chatbot assistant that can answer questions about my high school using scraped documents.',
     tech: ['Python', 'LangChain', 'HuggingFace', 'FAISS'],
     link: 'https://github.com/aryanj2374/DHSChatbotProject',
-    icon: 'Database'
+    icon: 'MessageCircle'
   },
   {
     id: 3,
@@ -136,42 +170,57 @@ const PROJECTS = [
     description: 'Built a model to predict a student\'s scholarship probabilities using regression.',
     tech: ['Python', 'Scikit-learn', 'Tensorflow', 'Keras', 'Pandas', 'NumPy', 'Matplotlib'],
     link: 'https://github.com/aryanj2374/ScholarshipProbabilityModel',
-    icon: 'Cpu'
+    icon: 'TrendingUp'
   }
 ]
 
 const EXPERIENCE = [
   {
     id: 1,
-    company: 'Tech Research Lab',
-    role: 'Machine Learning Research Intern',
-    date: 'Summer 2025',
+    company: 'Chipchop',
+    role: 'Software Engineering Intern',
+    date: 'January 2026 - Present',
+    icon: 'Cpu',
     bullets: [
-      'Developed novel neural architecture for multi-modal learning, improving baseline accuracy by 12%',
-      'Implemented distributed training pipeline reducing model convergence time by 40%',
-      'Co-authored research paper on attention mechanisms accepted to NeurIPS workshop'
+      'Implementing a multi-agent architecture for chip design automation across simulation, spec analysis, and linting.',
+      'Developing evaluation metrics to measure model output quality and reliability across agent interactions.',
+      'Enhancing the UI of an AI-assisted IDE to improve visibility, debugging, and interaction with agent-driven tools.'
     ]
   },
   {
     id: 2,
-    company: 'UC Berkeley Data Lab',
+    company: 'Undergraduate Lab at Berkeley',
     role: 'Undergraduate Researcher',
-    date: '2024 — Present',
+    date: 'September 2025 - Present',
+    icon: 'Telescope',
     bullets: [
-      'Leading research on interpretable machine learning methods for healthcare applications',
-      'Built automated data preprocessing pipeline handling 50+ medical imaging datasets',
-      'Mentoring 3 junior researchers on deep learning fundamentals and best practices'
+      'Exploring protoplanetary disk chemistry to predict if forming exoplanets will be suitable for nurturing life.',
+      'Use CARTA, CASSIS, and Python to model spectra and make predictions with data extracted from datacubes.',
+      "Present a poster of the group's research and findings at a symposium to graduate students and professors."
     ]
   },
   {
     id: 3,
-    company: 'AI Startup',
-    role: 'Data Science Intern',
+    company: 'Quantum Materials Research Group',
+    role: 'Undergraduate Researcher',
     date: 'Summer 2024',
+    icon: 'Zap',
     bullets: [
-      'Designed recommendation engine serving 100K+ daily active users with sub-50ms latency',
-      'Optimized feature store reducing infrastructure costs by 30% while improving model freshness',
-      'Developed A/B testing framework for evaluating ML model performance in production'
+      'Conducted database screening with Python on 200k+ materials to identify more efficient PV cell materials.',
+      'Worked under Prof. Sobhit Singh to optimize sunlight capture and reduce carbon emissions in the energy sector.',
+      'Presented results to 20+ graduate researchers in a Materials Science seminar at the University of Rochester.'
+    ]
+  },
+  {
+    id: 4,
+    company: 'Independent Research – AstroGEN-NSSEA Innovation Competition',
+    role: 'Lead Developer',
+    date: 'November 2023 - January 2024',
+    icon: 'Trophy',
+    bullets: [
+      'Modified the Particle Swarm Optimization (PSO) algorithm to improve overall convergence in swarm robotics.',
+      'Search and rescue context: improved convergence enables swarms to locate stranded individuals more effectively.',
+      'Published and findings in the astroGEN-Think Tank competition, winning Best Research Paper (1st/150+).'
     ]
   }
 ]
@@ -428,30 +477,37 @@ function Experience() {
           Experience
         </h2>
         <p className="section-subtitle reveal">
-          Research and industry experience building production ML systems and conducting
-          applied AI research.
+          Research and industry experience building production ML systems and conducting research.
         </p>
 
         <div className="experience__timeline">
-          {EXPERIENCE.map((exp, index) => (
-            <article
-              key={exp.id}
-              className="glass-card experience-card reveal"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="experience-card__header">
-                <h3 className="experience-card__company">{exp.company}</h3>
-                <p className="experience-card__role">{exp.role}</p>
-                <p className="experience-card__date">{exp.date}</p>
-              </div>
+          {EXPERIENCE.map((exp, index) => {
+            const IconComponent = Icons[exp.icon] || Icons.Code
+            return (
+              <article
+                key={exp.id}
+                className="glass-card experience-card reveal"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="experience-card__header">
+                  <div className="experience-card__icon">
+                    <IconComponent />
+                  </div>
+                  <div className="experience-card__info">
+                    <h3 className="experience-card__company">{exp.company}</h3>
+                    <p className="experience-card__role">{exp.role}</p>
+                    <p className="experience-card__date">{exp.date}</p>
+                  </div>
+                </div>
 
-              <ul className="experience-card__bullets">
-                {exp.bullets.map((bullet, i) => (
-                  <li key={i}>{bullet}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
+                <ul className="experience-card__bullets">
+                  {exp.bullets.map((bullet, i) => (
+                    <li key={i}>{bullet}</li>
+                  ))}
+                </ul>
+              </article>
+            )
+          })}
         </div>
       </div>
     </section>
