@@ -229,7 +229,7 @@ const SKILLS = {
   'Programming': ['Python', 'JavaScript', 'SQL', 'Java'],
   'Machine Learning': ['PyTorch', 'TensorFlow', 'Scikit-learn', 'HuggingFace', 'LangChain'],
   // 'Data & Cloud': ['PostgreSQL', 'MongoDB', 'Spark', 'AWS', 'GCP', 'Docker', 'Kubernetes'],
-  'Tools & Frameworks': ['React', 'FastAPI', 'Git', 'Jupyter', 'FAISS', 'FastAPI', 'Pandas', 'NumPy', 'Matplotlib']
+  'Tools & Frameworks': ['React', 'FastAPI', 'Git', 'Jupyter', 'FAISS', 'Pandas', 'NumPy', 'Matplotlib']
 }
 
 const NAV_LINKS = [
@@ -358,30 +358,32 @@ function Navigation() {
 function Hero() {
   return (
     <section className="hero" id="hero">
-      <div className="hero__content">
-        <div className="hero__badge animate-fadeInUp">
-          Open to Opportunities
-        </div>
+      <div className="container">
+        <div className="hero__content hero__content--center">
+          <div className="hero__badge animate-fadeInUp">
+            Open to Opportunities
+          </div>
 
-        <h1 className="hero__name animate-fadeInUp delay-100">
-          {PERSONAL_INFO.name}
-        </h1>
+          <h1 className="hero__name animate-fadeInUp delay-100">
+            {PERSONAL_INFO.name}
+          </h1>
 
-        <p className="hero__title animate-fadeInUp delay-200">
-          {PERSONAL_INFO.title}
-        </p>
+          <p className="hero__title animate-fadeInUp delay-200">
+            {PERSONAL_INFO.title}
+          </p>
 
-        <p className="hero__tagline animate-fadeInUp delay-300">
-          {PERSONAL_INFO.tagline}
-        </p>
+          <p className="hero__tagline animate-fadeInUp delay-300">
+            {PERSONAL_INFO.tagline}
+          </p>
 
-        <div className="hero__buttons animate-fadeInUp delay-400">
-          <a href="#projects" className="btn btn-primary">
-            View Projects
-          </a>
-          <a href="#contact" className="btn btn-secondary">
-            Get in Touch
-          </a>
+          <div className="hero__buttons animate-fadeInUp delay-400">
+            <a href="#projects" className="btn btn-primary">
+              View Projects
+            </a>
+            <a href="#contact" className="btn btn-secondary">
+              Get in Touch
+            </a>
+          </div>
         </div>
       </div>
 
@@ -404,7 +406,7 @@ function ProjectCard({ project, index }) {
   return (
     <article
       className="glass-card project-card reveal"
-      style={{ animationDelay: `${index * 100}ms` }}
+      style={{ transitionDelay: `${index * 100}ms` }}
     >
       <div className="project-card__header">
         <div className="project-card__icon">
@@ -444,13 +446,62 @@ function Projects() {
   return (
     <section className="section projects" id="projects" ref={sectionRef}>
       <div className="container">
-        <h2 className="section-title reveal">
-          Featured <span className="gradient-text">Projects</span>
-        </h2>
-        <p className="section-subtitle reveal">
-          A selection of research and engineering projects spanning machine learning,
-          data infrastructure, and full-stack development.
-        </p>
+        <div className="projects__intro">
+          <div className="projects__text">
+            <h2 className="section-title reveal">
+              Featured <span className="gradient-text">Projects</span>
+            </h2>
+            <p className="section-subtitle reveal">
+              A selection of research and engineering projects spanning machine learning,
+              data infrastructure, and full-stack development.
+            </p>
+          </div>
+          <div className="projects__artifact reveal">
+            <div className="hero-artifact glass-card" aria-hidden="true">
+              <div className="hero-artifact__glow" />
+              <div className="hero-artifact__header">
+                <div className="hero-artifact__dots">
+                  <span className="hero-artifact__dot hero-artifact__dot--red" />
+                  <span className="hero-artifact__dot hero-artifact__dot--yellow" />
+                  <span className="hero-artifact__dot hero-artifact__dot--green" />
+                </div>
+                <span className="hero-artifact__title">CalSquared</span>
+                <span className="hero-artifact__pill hero-artifact__pill--accent">Preview</span>
+              </div>
+
+              <div className="hero-artifact__cards">
+                <div className="hero-panel">
+                  <div className="hero-panel__eyebrow">LAST GMAIL SYNC</div>
+                  <div className="hero-panel__line hero-panel__line--wide" />
+                  <div className="hero-panel__line hero-panel__line--short" />
+                  <div className="hero-panel__stat-pill hero-panel__stat-pill--wide" />
+                </div>
+
+                <div className="hero-panel">
+                  <div className="hero-panel__eyebrow">RECOMMENDATIONS</div>
+                  <div className="hero-panel__pill-row">
+                    <span className="hero-panel__pill" />
+                    <span className="hero-panel__pill hero-panel__pill--short" />
+                  </div>
+                </div>
+
+                <div className="hero-panel">
+                  <div className="hero-panel__eyebrow">TO-DO</div>
+                  <div className="hero-panel__todo">
+                    <div className="hero-panel__todo-item">
+                      <span className="hero-panel__checkbox" />
+                      <span className="hero-panel__line hero-panel__line--wide" />
+                    </div>
+                    <div className="hero-panel__todo-item">
+                      <span className="hero-panel__checkbox" />
+                      <span className="hero-panel__line hero-panel__line--short" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="projects__grid">
           {PROJECTS.map((project, index) => (
@@ -487,7 +538,7 @@ function Experience() {
               <article
                 key={exp.id}
                 className="glass-card experience-card reveal"
-                style={{ animationDelay: `${index * 100}ms` }}
+                style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <div className="experience-card__header">
                   <div className="experience-card__icon">
@@ -537,7 +588,7 @@ function Skills() {
             <div
               key={category}
               className="glass-card skills__category reveal"
-              style={{ animationDelay: `${index * 100}ms` }}
+              style={{ transitionDelay: `${index * 100}ms` }}
             >
               <h3 className="skills__category-title">{category}</h3>
               <div className="skills__list">
