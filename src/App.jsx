@@ -136,6 +136,16 @@ const Icons = {
       <path d="M12 19V5" />
       <polyline points="5 12 12 5 19 12" />
     </svg>
+  ),
+  Network: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="5" r="3" />
+      <circle cx="5" cy="19" r="3" />
+      <circle cx="19" cy="19" r="3" />
+      <line x1="12" y1="8" x2="5" y2="16" />
+      <line x1="12" y1="8" x2="19" y2="16" />
+      <line x1="5" y1="19" x2="19" y2="19" />
+    </svg>
   )
 }
 
@@ -161,15 +171,17 @@ const PROJECTS = [
     description: 'Built an agentic AI calendar assistant that automates scheduling and task management, providing context-aware recommendations such as gym timing, meal suggestions based on user preference, and dynamic to-do list updates.',
     tech: ['Python', 'FastAPI', 'LangChain', 'React'],
     link: 'https://github.com/aryanj2374/Calhacks12.0',
-    icon: 'Calendar'
+    icon: 'Calendar',
+    preview: 'calsquared'
   },
   {
     id: 2,
-    title: 'Chatbot Assistant',
-    description: 'Built a chatbot assistant that can answer questions about my high school using scraped documents.',
-    tech: ['Python', 'LangChain', 'HuggingFace', 'FAISS'],
-    link: 'https://github.com/aryanj2374/DHSChatbotProject',
-    icon: 'MessageCircle'
+    title: 'Multi-Agent Research Assistant',
+    description: 'Built a multi-agent research assistant that uses the Semantic Scholar API to fetch academic papers and uses a multi-agent architecture to assign tasks to agents to create a comprehensive overview of the topic, including key insights, potential bias, and sources cited.',
+    tech: ['Python', 'FastAPI', 'asyncio', 'HuggingFace', 'Vite', 'React', 'TypeScript'],
+    link: 'https://github.com/aryanj2374/aryanj2374.github.io',
+    icon: 'Network',
+    preview: 'research'
   },
   {
     id: 3,
@@ -177,7 +189,8 @@ const PROJECTS = [
     description: 'Built a model to predict a student\'s scholarship probabilities using regression.',
     tech: ['Python', 'Scikit-learn', 'Tensorflow', 'Keras', 'Pandas', 'NumPy', 'Matplotlib'],
     link: 'https://github.com/aryanj2374/ScholarshipProbabilityModel',
-    icon: 'TrendingUp'
+    icon: 'TrendingUp',
+    preview: 'scholarship'
   }
 ]
 
@@ -468,42 +481,189 @@ function Hero() {
 }
 
 // =============================================================================
+// PROJECT PREVIEW COMPONENTS
+// Preview artifacts for each project
+// =============================================================================
+
+function CalSquaredPreview() {
+  return (
+    <div className="project-preview glass-card">
+      <div className="project-preview__glow" />
+      <div className="project-preview__header">
+        <div className="project-preview__dots">
+          <span className="project-preview__dot project-preview__dot--red" />
+          <span className="project-preview__dot project-preview__dot--yellow" />
+          <span className="project-preview__dot project-preview__dot--green" />
+        </div>
+        <span className="project-preview__pill">Preview</span>
+      </div>
+      <div className="project-preview__cards">
+        <div className="preview-panel">
+          <div className="preview-panel__eyebrow">LAST GMAIL SYNC</div>
+          <div className="preview-panel__line preview-panel__line--wide" />
+          <div className="preview-panel__line preview-panel__line--short" />
+        </div>
+        <div className="preview-panel">
+          <div className="preview-panel__eyebrow">RECOMMENDATIONS</div>
+          <div className="preview-panel__pill-row">
+            <span className="preview-panel__pill" />
+            <span className="preview-panel__pill preview-panel__pill--short" />
+          </div>
+        </div>
+        <div className="preview-panel">
+          <div className="preview-panel__eyebrow">TO-DO</div>
+          <div className="preview-panel__todo">
+            <div className="preview-panel__todo-item">
+              <span className="preview-panel__checkbox" />
+              <span className="preview-panel__line preview-panel__line--wide" />
+            </div>
+            <div className="preview-panel__todo-item">
+              <span className="preview-panel__checkbox" />
+              <span className="preview-panel__line preview-panel__line--short" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ResearchPreview() {
+  return (
+    <div className="project-preview project-preview--cyan glass-card">
+      <div className="project-preview__glow project-preview__glow--cyan" />
+      <div className="project-preview__header">
+        <div className="project-preview__dots">
+          <span className="project-preview__dot project-preview__dot--red" />
+          <span className="project-preview__dot project-preview__dot--yellow" />
+          <span className="project-preview__dot project-preview__dot--green" />
+        </div>
+        <span className="project-preview__pill">Preview</span>
+      </div>
+      <div className="project-preview__chat">
+        <div className="preview-chat__bubble">
+          <span>What are the effects of creatine?</span>
+        </div>
+        <div className="preview-chat__agent">
+          <div className="preview-chat__icon">MA</div>
+          <div className="preview-chat__pipeline">
+            <div className="preview-chat__label">DEEP RESEARCH</div>
+            <div className="preview-chat__step preview-chat__step--done">
+              <span className="preview-chat__check">✓</span>
+              <span>Planner</span>
+              <span className="preview-chat__sub">3 sub-questions</span>
+            </div>
+            <div className="preview-chat__step preview-chat__step--active">
+              <span className="preview-chat__dot" />
+              <span>Researcher</span>
+            </div>
+            <div className="preview-chat__step">
+              <span className="preview-chat__num">2</span>
+              <span>Synthesizer</span>
+            </div>
+            <div className="preview-chat__step">
+              <span className="preview-chat__num">3</span>
+              <span>Referee</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ScholarshipPreview() {
+  return (
+    <div className="project-preview project-preview--green glass-card">
+      <div className="project-preview__glow project-preview__glow--green" />
+      <div className="project-preview__header">
+        <div className="project-preview__dots">
+          <span className="project-preview__dot project-preview__dot--red" />
+          <span className="project-preview__dot project-preview__dot--yellow" />
+          <span className="project-preview__dot project-preview__dot--green" />
+        </div>
+        <span className="project-preview__pill">Preview</span>
+      </div>
+      <div className="project-preview__model">
+        <div className="preview-model__inputs">
+          <div className="preview-model__field">
+            <span className="preview-model__label">GPA</span>
+            <span className="preview-model__value">3.85</span>
+          </div>
+          <div className="preview-model__field">
+            <span className="preview-model__label">SAT</span>
+            <span className="preview-model__value">1480</span>
+          </div>
+          <div className="preview-model__field">
+            <span className="preview-model__label">Activities</span>
+            <span className="preview-model__value">5</span>
+          </div>
+        </div>
+        <div className="preview-model__result">
+          <div className="preview-model__gauge">
+            <svg viewBox="0 0 100 60" className="preview-model__gauge-svg">
+              <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="8" strokeLinecap="round" />
+              <path d="M 10 55 A 40 40 0 0 1 75 20" fill="none" stroke="url(#scholarshipGauge)" strokeWidth="8" strokeLinecap="round" />
+              <defs>
+                <linearGradient id="scholarshipGauge" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#4ade80" />
+                  <stop offset="100%" stopColor="#22d3ee" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="preview-model__percentage">78%</div>
+          </div>
+          <span className="preview-model__caption">Scholarship Probability</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const PROJECT_PREVIEWS = {
+  calsquared: CalSquaredPreview,
+  research: ResearchPreview,
+  scholarship: ScholarshipPreview
+}
+
+// =============================================================================
 // PROJECT CARD COMPONENT
-// Individual project display with hover effects
+// Individual project display with hover effects and preview
 // =============================================================================
 
 function ProjectCard({ project, index }) {
   const IconComponent = Icons[project.icon] || Icons.Code
+  const PreviewComponent = PROJECT_PREVIEWS[project.preview]
 
   return (
-    <article
-      className="glass-card project-card reveal"
-      style={{ transitionDelay: `${index * 100}ms` }}
-    >
-      <div className="project-card__header">
-        <div className="project-card__icon">
-          <IconComponent />
+    <div className="project-wrapper reveal" style={{ transitionDelay: `${index * 100}ms` }}>
+      <article className="glass-card project-card">
+        <div className="project-card__header">
+          <div className="project-card__icon">
+            <IconComponent />
+          </div>
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="project-card__link"
+            aria-label={`View ${project.title} on GitHub`}
+          >
+            <Icons.ExternalLink />
+          </a>
         </div>
-        <a
-          href={project.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="project-card__link"
-          aria-label={`View ${project.title} on GitHub`}
-        >
-          <Icons.ExternalLink />
-        </a>
-      </div>
 
-      <h3 className="project-card__title">{project.title}</h3>
-      <p className="project-card__description">{project.description}</p>
+        <h3 className="project-card__title">{project.title}</h3>
+        <p className="project-card__description">{project.description}</p>
 
-      <div className="project-card__tech">
-        {project.tech.map(tech => (
-          <span key={tech} className="tech-chip">{tech}</span>
-        ))}
-      </div>
-    </article>
+        <div className="project-card__tech">
+          {project.tech.map(tech => (
+            <span key={tech} className="tech-chip">{tech}</span>
+          ))}
+        </div>
+      </article>
+      {PreviewComponent && <PreviewComponent />}
+    </div>
   )
 }
 
@@ -518,62 +678,13 @@ function Projects() {
   return (
     <section className="section projects" id="projects" ref={sectionRef}>
       <div className="container">
-        <div className="projects__intro">
-          <div className="projects__text">
-            <h2 className="section-title reveal">
-              Featured <span className="gradient-text">Projects</span>
-            </h2>
-            <p className="section-subtitle reveal">
-              A selection of research and engineering projects spanning machine learning,
-              data infrastructure, and full-stack development.
-            </p>
-          </div>
-          <div className="projects__artifact reveal">
-            <div className="hero-artifact glass-card" aria-hidden="true">
-              <div className="hero-artifact__glow" />
-              <div className="hero-artifact__header">
-                <div className="hero-artifact__dots">
-                  <span className="hero-artifact__dot hero-artifact__dot--red" />
-                  <span className="hero-artifact__dot hero-artifact__dot--yellow" />
-                  <span className="hero-artifact__dot hero-artifact__dot--green" />
-                </div>
-                <span className="hero-artifact__title">CalSquared</span>
-                <span className="hero-artifact__pill hero-artifact__pill--accent">Preview</span>
-              </div>
-
-              <div className="hero-artifact__cards">
-                <div className="hero-panel">
-                  <div className="hero-panel__eyebrow">LAST GMAIL SYNC</div>
-                  <div className="hero-panel__line hero-panel__line--wide" />
-                  <div className="hero-panel__line hero-panel__line--short" />
-                  <div className="hero-panel__stat-pill hero-panel__stat-pill--wide" />
-                </div>
-
-                <div className="hero-panel">
-                  <div className="hero-panel__eyebrow">RECOMMENDATIONS</div>
-                  <div className="hero-panel__pill-row">
-                    <span className="hero-panel__pill" />
-                    <span className="hero-panel__pill hero-panel__pill--short" />
-                  </div>
-                </div>
-
-                <div className="hero-panel">
-                  <div className="hero-panel__eyebrow">TO-DO</div>
-                  <div className="hero-panel__todo">
-                    <div className="hero-panel__todo-item">
-                      <span className="hero-panel__checkbox" />
-                      <span className="hero-panel__line hero-panel__line--wide" />
-                    </div>
-                    <div className="hero-panel__todo-item">
-                      <span className="hero-panel__checkbox" />
-                      <span className="hero-panel__line hero-panel__line--short" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <h2 className="section-title reveal">
+          Featured <span className="gradient-text">Projects</span>
+        </h2>
+        <p className="section-subtitle reveal">
+          A selection of research and engineering projects spanning machine learning,
+          data infrastructure, and full-stack development.
+        </p>
 
         <div className="projects__grid">
           {PROJECTS.map((project, index) => (
