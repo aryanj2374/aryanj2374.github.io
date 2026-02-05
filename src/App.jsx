@@ -223,7 +223,7 @@ const EXPERIENCE = [
     id: 3,
     company: 'Quantum Materials Research Group',
     role: 'Undergraduate Researcher',
-    date: 'Summer 2024',
+    date: 'July 2024 - December 2024',
     icon: 'Zap',
     bullets: [
       'Conducted database screening with Python on 200k+ materials to identify more efficient PV cell materials.',
@@ -233,7 +233,7 @@ const EXPERIENCE = [
   },
   {
     id: 4,
-    company: 'Independent Research – AstroGEN-NSSEA Innovation Competition',
+    company: 'Independent Research - AstroGEN-NSSEA Innovation Competition',
     role: 'Lead Developer',
     date: 'November 2023 - January 2024',
     icon: 'Trophy',
@@ -246,10 +246,10 @@ const EXPERIENCE = [
 ]
 
 const SKILLS = {
-  'Programming': ['Python', 'JavaScript', 'SQL', 'Java'],
-  'Machine Learning': ['PyTorch', 'TensorFlow', 'Scikit-learn', 'HuggingFace', 'LangChain'],
+  'Programming': ['Python', 'JavaScript', 'TypeScript', 'SQL', 'Java'],
+  'Machine Learning': ['PyTorch', 'TensorFlow', 'Keras', 'Scikit-learn', 'HuggingFace', 'LangChain'],
   // 'Data & Cloud': ['PostgreSQL', 'MongoDB', 'Spark', 'AWS', 'GCP', 'Docker', 'Kubernetes'],
-  'Tools & Frameworks': ['React', 'FastAPI', 'Git', 'Jupyter', 'FAISS', 'Pandas', 'NumPy', 'Matplotlib']
+  'Tools & Frameworks': ['React', 'Vite', 'FastAPI', 'Git', 'Jupyter', 'FAISS', 'Pandas', 'NumPy', 'Matplotlib']
 }
 
 const NAV_LINKS = [
