@@ -202,9 +202,9 @@ const EXPERIENCE = [
     date: 'January 2026 - Present',
     icon: 'Cpu',
     bullets: [
-      'Implementing a multi-agent architecture for chip design automation across simulation, spec analysis, and linting.',
-      'Developing evaluation metrics to measure model output quality and reliability across agent interactions.',
-      'Enhancing the UI of an AI-assisted IDE to improve visibility, debugging, and interaction with agent-driven tools.'
+      'Built backend features for an FPGA debugging platform using Python, FastAPI, and WebSockets, enabling a multi-agent system to analyze and troubleshoot Verilog/VHDL projects in a Vivado-style environment.',
+      'Improved developer workflows in the React + TypeScript IDE by enhancing evaluation and debugging tooling to surface agent outputs, run artifacts, and project context directly within the IDE interface and debugging panels.',
+      'Strengthened pipeline reliability by adding validation, diagnostics-based error handling, and automated tests with pytest and unittest.mock, stabilizing multi-agent execution on larger HDL project evaluations and debugging runs.'
     ]
   },
   {
