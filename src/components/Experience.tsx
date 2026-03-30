@@ -35,7 +35,7 @@ export default function Experience() {
               lineHeight: 1.65,
             }}
           >
-            Research and industry experience building production ML systems and conducting research.
+            Experience building production ML systems and conducting research.
           </p>
         </div>
 
