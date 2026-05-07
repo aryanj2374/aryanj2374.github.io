@@ -1,8 +1,4 @@
-const SKILLS = {
-  Programming: ['Python', 'JavaScript', 'TypeScript', 'SQL', 'Java'],
-  ML: ['PyTorch', 'TensorFlow', 'Keras', 'Scikit-learn', 'HuggingFace', 'LangChain'],
-  Tools: ['React', 'Vite', 'FastAPI', 'Git', 'Jupyter', 'FAISS', 'Pandas', 'NumPy'],
-}
+import { SKILLS } from '../data/portfolio'
 
 export default function About() {
   const allSkills = Object.entries(SKILLS)
@@ -11,17 +7,15 @@ export default function About() {
     <section
       id="skills"
       style={{
-        background: '#ffffff',
+        background: '#f5f5f7',
         padding: '120px clamp(32px, 6.5vw, 100px)',
       }}
     >
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        {/* Section label */}
         <div className="reveal" style={{ marginBottom: 64 }}>
           <p className="section-label">// About</p>
         </div>
 
-        {/* 60/40 split */}
         <div
           style={{
             display: 'grid',
@@ -31,14 +25,13 @@ export default function About() {
           }}
           className="about-grid"
         >
-          {/* Left — Bio */}
           <div className="reveal">
             <p
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 700,
                 fontSize: 'clamp(28px, 3.5vw, 44px)',
-                color: '#0a0a0a',
+                color: '#1d1d1f',
                 letterSpacing: '-0.02em',
                 lineHeight: 1.1,
                 marginBottom: 32,
@@ -57,7 +50,7 @@ export default function About() {
                   style={{
                     fontFamily: 'Inter, sans-serif',
                     fontSize: 17,
-                    color: '#6b6b6b',
+                    color: '#6e6e73',
                     lineHeight: 1.7,
                   }}
                 >
@@ -67,11 +60,7 @@ export default function About() {
             </div>
           </div>
 
-          {/* Right — Skills */}
-          <div
-            className="reveal"
-            style={{ transitionDelay: '0.12s' }}
-          >
+          <div className="reveal" style={{ transitionDelay: '0.12s' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
               {allSkills.map(([category, skills]) => (
                 <div key={category}>
@@ -79,7 +68,7 @@ export default function About() {
                     style={{
                       fontFamily: 'Space Mono, monospace',
                       fontSize: 11,
-                      color: '#9a9a9a',
+                      color: '#98989d',
                       letterSpacing: '0.15em',
                       textTransform: 'uppercase',
                       marginBottom: 16,
@@ -87,17 +76,9 @@ export default function About() {
                   >
                     {category}
                   </p>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '4px 0',
-                    }}
-                  >
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {skills.map(skill => (
-                      <div key={skill} className="skill-item">
-                        {skill}
-                      </div>
+                      <span key={skill} className="tech-pill">{skill}</span>
                     ))}
                   </div>
                 </div>
@@ -109,9 +90,7 @@ export default function About() {
 
       <style>{`
         @media (max-width: 768px) {
-          .about-grid {
-            grid-template-columns: 1fr !important;
-          }
+          .about-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>

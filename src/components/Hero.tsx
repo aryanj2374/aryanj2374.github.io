@@ -167,9 +167,9 @@ function useNeuralSphereCanvas(ref: React.RefObject<HTMLCanvasElement | null>) {
         const pb = display[e.b]
         const zAvg = (pa.z + pb.z) / 2
         const depth = (zAvg + R) / (2 * R)
-        const alpha = 0.06 + depth * 0.06
+        const alpha = 0.02 + depth * 0.025
         ctx.beginPath()
-        ctx.strokeStyle = `rgba(26,26,26,${alpha.toFixed(3)})`
+        ctx.strokeStyle = `rgba(29,29,31,${alpha.toFixed(3)})`
         ctx.lineWidth = 0.5
         ctx.moveTo(pa.sx, pa.sy)
         ctx.lineTo(pb.sx, pb.sy)
@@ -180,9 +180,9 @@ function useNeuralSphereCanvas(ref: React.RefObject<HTMLCanvasElement | null>) {
       for (const p of sorted) {
         const depth = (p.z + R) / (2 * R)
         const r = depth < 0.5 ? 1 + depth : 2.5 + (depth - 0.5)
-        const alpha = 0.04 + depth * 0.66
+        const alpha = 0.015 + depth * 0.22
         ctx.beginPath()
-        ctx.strokeStyle = `rgba(26,26,26,${Math.min(alpha, 0.7).toFixed(3)})`
+        ctx.strokeStyle = `rgba(29,29,31,${Math.min(alpha, 0.24).toFixed(3)})`
         ctx.lineWidth = 0.7
         ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2)
         ctx.stroke()
@@ -226,13 +226,21 @@ function useNeuralSphereCanvas(ref: React.RefObject<HTMLCanvasElement | null>) {
 
 /* ── Marquee ── */
 const MARQUEE_ITEMS = [
-  { main: 'AI', sub: 'Artificial Intelligence' },
-  { main: 'Research', sub: 'Academic & Applied' },
-  { main: 'ML Engineering', sub: 'Production Systems' },
-  { main: 'Berkeley', sub: 'UC Berkeley' },
-  { main: 'Agentic Systems', sub: 'Multi-Agent AI' },
-  { main: 'Data Science', sub: 'Analysis & Modeling' },
-  { main: 'Systems Design', sub: 'Architecture' },
+  { main: 'AI Agents', sub: 'Multi-agent systems' },
+  { main: 'FPGA Debugging', sub: 'Vivado-style workflows' },
+  { main: 'Developer Tools', sub: 'IDE integrations' },
+  { main: 'Research Systems', sub: 'Scientific computing' },
+  { main: 'Spectral Analysis', sub: 'ALMA datacubes' },
+  { main: 'Protoplanetary Disks', sub: 'Astrochemistry' },
+  { main: 'Quantum Materials', sub: 'DFT / materials research' },
+  { main: 'Full-Stack AI', sub: 'React & FastAPI' },
+  { main: 'Python Backends', sub: 'APIs & orchestration' },
+  { main: 'Data Science', sub: 'Modeling & analysis' },
+  { main: 'LLM Tooling', sub: 'Agent workflows' },
+  { main: 'Workflow Automation', sub: 'Calendar + Gmail agents' },
+  { main: 'Scientific Python', sub: 'NumPy, pandas, SciPy' },
+  { main: 'TypeScript UIs', sub: 'React + Vite' },
+  { main: 'Reliable Systems', sub: 'Testing & validation' },
 ]
 
 function Marquee() {
@@ -244,25 +252,25 @@ function Marquee() {
         bottom: 0,
         left: 0,
         right: 0,
-        borderTop: '1px solid #e0deda',
+        borderTop: '1px solid #e5e5e5',
         height: 72,
         overflow: 'hidden',
-        background: '#f5f4f0',
+        background: '#ffffff',
         zIndex: 12,
       }}
     >
       <div className="marquee-track" style={{ height: '100%', alignItems: 'center' }}>
         {doubled.map((item, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 32, paddingRight: 32 }}>
-            <div style={{ width: 1, height: 32, background: '#e0deda', flexShrink: 0 }} />
-            <div>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 26, color: '#0a0a0a', lineHeight: 1, whiteSpace: 'nowrap' }}>
+          <div key={i} style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+            <div style={{ marginRight: '2rem' }}>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 26, color: '#1d1d1f', lineHeight: 1, whiteSpace: 'nowrap' }}>
                 {item.main}
               </div>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10, color: '#9a9a9a', letterSpacing: '0.08em', marginTop: 4, whiteSpace: 'nowrap' }}>
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10, color: '#98989d', letterSpacing: '0.08em', marginTop: 4, whiteSpace: 'nowrap' }}>
                 {item.sub}
               </div>
             </div>
+            <span style={{ color: '#d2d2d7', fontSize: 18, marginRight: '2rem', lineHeight: 1, flexShrink: 0 }}>·</span>
           </div>
         ))}
       </div>
@@ -281,7 +289,7 @@ export default function Hero() {
         position: 'relative',
         height: '100vh',
         minHeight: 600,
-        background: '#f5f4f0',
+        background: '#ffffff',
         overflow: 'hidden',
         paddingTop: 64,
       }}
@@ -323,9 +331,9 @@ export default function Hero() {
             animation: 'fadeInUp 0.5s ease-out 0.05s both',
           }}
         >
-          <div style={{ width: 40, height: 1, background: '#9a9a9a', flexShrink: 0 }} />
-          <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: '#9a9a9a', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-            Engineer &amp; Researcher
+          <div style={{ width: 40, height: 1, background: '#d2d2d7', flexShrink: 0 }} />
+          <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: '#98989d', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+            Developer &amp; Researcher
           </span>
         </div>
 
@@ -336,7 +344,7 @@ export default function Hero() {
             fontWeight: 900,
             fontSize: 'clamp(56px, 9vw, 130px)',
             lineHeight: 1.0,
-            color: '#0a0a0a',
+            color: '#1d1d1f',
             letterSpacing: '-0.02em',
             marginBottom: 36,
             width: '75vw',
@@ -353,21 +361,20 @@ export default function Hero() {
           ))}
         </h1>
 
-        {/* Subtext + buttons row */}
+        {/* Subtext + buttons — grouped vertically */}
         <div
           style={{
             display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: 32,
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 24,
             animation: 'fadeInUp 0.5s ease-out 0.5s both',
           }}
         >
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 17, color: '#6b6b6b', fontWeight: 400, maxWidth: 440, lineHeight: 1.65 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 17, color: '#6e6e73', fontWeight: 400, maxWidth: 440, lineHeight: 1.65 }}>
             Data Science @ UC Berkeley
           </p>
-          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', paddingBottom: 4 }}>
+          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
             <a href="#projects" className="btn-primary">View work →</a>
             <a href="#contact" className="btn-secondary">Get in touch</a>
           </div>

@@ -10,7 +10,7 @@ export default function Footer() {
   return (
     <footer
       style={{
-        background: '#0a0a0a',
+        background: '#000000',
         height: 80,
         display: 'flex',
         alignItems: 'center',

@@ -1,16 +1,40 @@
+import { useEffect, useRef } from 'react'
 import { EXPERIENCE } from '../data/portfolio'
 
 export default function Experience() {
+  const entryRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  useEffect(() => {
+    let observer: IntersectionObserver
+    const raf = requestAnimationFrame(() => {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('entry-visible')
+              observer.unobserve(entry.target)
+            }
+          })
+        },
+        { threshold: 0.2, rootMargin: '0px 0px -60px 0px' }
+      )
+      entryRefs.current.forEach(el => { if (el) observer.observe(el) })
+    })
+    return () => {
+      cancelAnimationFrame(raf)
+      observer?.disconnect()
+    }
+  }, [])
+
   return (
     <section
       id="experience"
       style={{
-        background: '#ffffff',
+        background: '#f5f5f7',
         padding: '120px clamp(32px, 6.5vw, 100px)',
       }}
     >
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        {/* Section header */}
         <div className="reveal" style={{ marginBottom: 64 }}>
           <p className="section-label">// Experience</p>
           <h2
@@ -18,7 +42,7 @@ export default function Experience() {
               fontFamily: 'Inter, sans-serif',
               fontWeight: 700,
               fontSize: 'clamp(32px, 4vw, 48px)',
-              color: '#0a0a0a',
+              color: '#1d1d1f',
               letterSpacing: '-0.02em',
               lineHeight: 1.1,
               marginBottom: 16,
@@ -30,7 +54,7 @@ export default function Experience() {
             style={{
               fontFamily: 'Inter, sans-serif',
               fontSize: 16,
-              color: '#6b6b6b',
+              color: '#6e6e73',
               maxWidth: 540,
               lineHeight: 1.65,
             }}
@@ -39,38 +63,37 @@ export default function Experience() {
           </p>
         </div>
 
-        {/* Timeline */}
         <div style={{ position: 'relative', paddingLeft: 'clamp(100px, 14vw, 180px)' }}>
-          {/* Vertical line */}
           <div className="timeline-line" />
 
           {EXPERIENCE.map((entry, i) => (
             <div
               key={i}
-              className="reveal"
+              ref={el => { entryRefs.current[i] = el }}
+              className="timeline-entry"
               style={{
-                transitionDelay: `${i * 0.12}s`,
+                transitionDelay: `${i * 0.1}s`,
                 display: 'flex',
                 gap: 40,
                 marginBottom: i < EXPERIENCE.length - 1 ? 64 : 0,
                 position: 'relative',
               }}
             >
-              {/* Dot on timeline */}
               <div
+                className="timeline-node-dot"
                 style={{
+                  transitionDelay: `${i * 0.1}s`,
                   position: 'absolute',
                   left: 'calc(-1 * clamp(100px, 14vw, 180px) + 0px)',
                   top: 6,
-                  width: 7,
-                  height: 7,
-                  background: '#0a0a0a',
+                  width: 8,
+                  height: 8,
+                  background: '#1d1d1f',
                   borderRadius: '50%',
-                  transform: 'translateX(-3px)',
+                  transformOrigin: 'center',
                 }}
               />
 
-              {/* Date — floated far left */}
               <div
                 style={{
                   position: 'absolute',
@@ -82,24 +105,24 @@ export default function Experience() {
                 <span
                   style={{
                     fontFamily: 'Space Mono, monospace',
-                    fontSize: 12,
-                    color: '#9a9a9a',
+                    fontSize: 11,
+                    color: '#98989d',
                     lineHeight: 1.5,
                     display: 'block',
+                    letterSpacing: '0.02em',
                   }}
                 >
                   {entry.date}
                 </span>
               </div>
 
-              {/* Content */}
               <div style={{ flex: 1 }}>
                 <h3
                   style={{
                     fontFamily: 'Inter, sans-serif',
                     fontWeight: 600,
                     fontSize: 18,
-                    color: '#0a0a0a',
+                    color: '#1d1d1f',
                     marginBottom: 4,
                     letterSpacing: '-0.01em',
                   }}
@@ -110,50 +133,38 @@ export default function Experience() {
                   style={{
                     fontFamily: 'Space Mono, monospace',
                     fontSize: 13,
-                    color: '#9a9a9a',
+                    color: '#6e6e73',
                     marginBottom: 16,
                   }}
                 >
                   {entry.role}
                 </p>
 
-                {/* Tags */}
-                <p
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+                  {entry.tags.map(tag => (
+                    <span key={tag} className="tech-pill">{tag}</span>
+                  ))}
+                </div>
+
+                <ul
                   style={{
-                    fontFamily: 'Space Mono, monospace',
-                    fontSize: 11,
-                    color: '#0a0a0a',
-                    letterSpacing: '0.02em',
-                    marginBottom: 16,
+                    borderLeft: '1px solid #d2d2d7',
+                    paddingLeft: 16,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 10,
                   }}
                 >
-                  {entry.tags.join(' · ')}
-                </p>
-
-                {/* Bullets */}
-                <ul style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {entry.bullets.map((b, j) => (
                     <li
                       key={j}
                       style={{
                         fontFamily: 'Inter, sans-serif',
                         fontSize: 14,
-                        color: '#6b6b6b',
+                        color: '#6e6e73',
                         lineHeight: 1.7,
-                        paddingLeft: 20,
-                        position: 'relative',
                       }}
                     >
-                      <span
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          color: '#9a9a9a',
-                          fontFamily: 'Space Mono, monospace',
-                        }}
-                      >
-                        —
-                      </span>
                       {b}
                     </li>
                   ))}
