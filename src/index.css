@@ -148,60 +148,86 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin-bottom: 24px;
 }
 
-/* ── Project Rows ── */
-.project-row {
+/* ── Project Card Grid ── */
+.project-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #e5e5e5;
+  border: 1px solid #e5e5e5;
+}
+
+.project-card-new {
   display: flex;
-  align-items: center;
-  position: relative;
-  padding: 36px 0;
-  border-bottom: 1px solid #e5e5e5;
-  overflow: hidden;
+  flex-direction: column;
+  padding: 36px 32px 32px;
+  background: #ffffff;
+  cursor: pointer;
   transition: background 200ms ease;
 }
 
-.project-row:first-child {
-  border-top: 1px solid #e5e5e5;
-}
-
-.project-row:hover {
+.project-card-new:hover {
   background: #f5f5f7;
 }
 
-.ghost-num {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.card-num {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #98989d;
+  letter-spacing: 0.10em;
+  margin-bottom: 20px;
+}
+
+.card-title {
   font-family: 'Inter', sans-serif;
-  font-weight: 900;
-  font-size: 180px;
+  font-weight: 700;
+  font-size: 22px;
   color: #1d1d1f;
-  opacity: 0.04;
-  line-height: 1;
-  pointer-events: none;
-  transition: opacity 300ms ease;
-  user-select: none;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 16px;
 }
 
-.project-row:hover .ghost-num {
-  opacity: 0.08;
+.project-card-new:hover .card-title {
+  color: #000000;
 }
 
-.project-row .view-link {
-  opacity: 0;
-  transition: opacity 200ms ease, color 200ms ease;
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.card-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #6e6e73;
+  line-height: 1.65;
+  flex: 1;
+  margin-bottom: 28px;
+}
+
+.card-cta {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: #003262;
-  white-space: nowrap;
-  flex-shrink: 0;
-  margin-left: 24px;
+  color: #98989d;
+  transition: color 200ms ease;
+  margin-top: auto;
 }
 
-.project-row:hover .view-link {
-  opacity: 1;
+.project-card-new:hover .card-cta {
+  color: #003262;
+}
+
+@media (max-width: 900px) {
+  .project-card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 580px) {
+  .project-card-grid { grid-template-columns: 1fr; }
 }
 
 /* ── Tech Pill Badges ── */

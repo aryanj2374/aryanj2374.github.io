@@ -1,225 +1,256 @@
 import { useEffect, useRef } from 'react'
 
-/* ── 3D Neural Sphere Canvas ── */
-function useNeuralSphereCanvas(ref: React.RefObject<HTMLCanvasElement | null>) {
+/* ── Computational Mesh ── */
+function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
   useEffect(() => {
     const canvas = ref.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const NODE_COUNT = 280
-    const NEIGHBORS = 3
-    const FOV = 380
+    let W = 0, H = 0, animId: number, time = 0
 
-    // Spring physics constants
-    const SPRING_RADIUS = 200
-    const SPRING_MAX = 18
-    const SPRING_LERP = 0.05
-    const SPRING_COUNT = 3
+    type NodeKind = 'corner' | 'square' | 'circle' | 'cross' | 'dot'
+    type Node = {
+      nx: number; ny: number
+      kind: NodeKind
+      tier: 0 | 1 | 2   // primary / secondary / micro
+      size: number; alpha: number
+      phase: number; phaseY: number
+      rotation: number
+      drift: number
+      accent: boolean    // Berkeley blue
+    }
 
-    type Node3D = { ox: number; oy: number; oz: number }
-    type Edge = { a: number; b: number }
-    let nodes3D: Node3D[] = []
-    let disp: { x: number; y: number }[] = []
-    let edges: Edge[] = []
+    // Primary blob is now very wide (sx=0.55, sy=0.52) so the field extends to within ~5% of
+    // each edge. The steep k=3.8 keeps the center-right dense while the outer fringe is sparse.
+    const BLOBS = [
+      { cx: 0.63, cy: 0.49, sx: 0.55, sy: 0.52, w: 1.00, k: 3.8 },  // near-full-canvas primary
+      { cx: 0.82, cy: 0.20, sx: 0.20, sy: 0.22, w: 0.64, k: 3.4 },  // upper-right accent
+    ]
+    const FOCAL = { cx: 0.66, cy: 0.47, sx: 0.096, sy: 0.112 }
 
-    let rotY = 0
-    let rotX = 0.18
-    let dRotY = 0.0025
-    let dRotX = 0.0006
-    let mouse = { x: -9999, y: -9999 }
-    let W = 0, H = 0
-    let animId: number
-    let lastTime = 0
+    const getDensity = (nx: number, ny: number): number => {
+      let d = 0
+      for (const b of BLOBS) {
+        const dx = (nx - b.cx) / b.sx
+        const dy = (ny - b.cy) / b.sy
+        d += b.w * Math.exp(-(dx * dx + dy * dy) * b.k)
+      }
+      return Math.min(1, d)
+    }
 
-    // Fibonacci golden-angle sphere distribution
-    const buildNodes = () => {
-      nodes3D = []
-      disp = []
-      const goldenAngle = Math.PI * (3 - Math.sqrt(5))
-      for (let i = 0; i < NODE_COUNT; i++) {
-        const y = 1 - (i / (NODE_COUNT - 1)) * 2
-        const r = Math.sqrt(1 - y * y)
-        const theta = goldenAngle * i
-        nodes3D.push({ ox: r * Math.cos(theta), oy: y, oz: r * Math.sin(theta) })
-        disp.push({ x: 0, y: 0 })
+    const getFocal = (nx: number, ny: number): number => {
+      const dx = (nx - FOCAL.cx) / FOCAL.sx
+      const dy = (ny - FOCAL.cy) / FOCAL.sy
+      return Math.exp(-(dx * dx + dy * dy) * 4.5)
+    }
+
+    const nodes: Node[] = []
+    const COLS = 46, ROWS = 38
+    const CW = 1 / COLS, CH = 1 / ROWS
+
+    let accentRemaining = 3  // max Berkeley blue accents
+
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        const bx = (col + 0.5) / COLS
+        const by = (row + 0.5) / ROWS
+        const d = getDensity(bx, by)
+        if (d < 0.036) continue
+
+        const nSpawn = Math.random() < d * 2.6 ? (Math.random() < d * 0.65 ? 2 : 1) : 0
+        for (let k = 0; k < nSpawn; k++) {
+          const nx = Math.max(0.01, Math.min(0.99, bx + (Math.random() - 0.5) * CW * 1.3))
+          const ny = Math.max(0.01, Math.min(0.99, by + (Math.random() - 0.5) * CH * 1.3))
+          const ld = getDensity(nx, ny)
+          const lf = getFocal(nx, ny)
+
+          // Tier kept only for connection logic — not for visual differentiation
+          const tier: 0 | 1 | 2 = lf > 0.45 ? 0 : ld > 0.55 ? 1 : 2
+
+          const r = Math.random()
+          const kind: NodeKind =
+            r < 0.38 ? 'corner' :
+            r < 0.62 ? 'square' :
+            r < 0.78 ? 'circle' :
+            r < 0.90 ? 'cross'  : 'dot'
+
+          // All nodes are small, delicate, same visual weight class.
+          // Size varies gently with density — no oversized primaries.
+          const size =
+            kind === 'dot'    ? 1.2 + Math.random() * 1.4 :
+            kind === 'circle' ? 1.4 + Math.random() * 2.4 * ld :
+            kind === 'corner' ? 2.6 + Math.random() * 3.2 * ld + lf * 2.2 :
+            kind === 'cross'  ? 2.0 + Math.random() * 2.4 * ld :
+                                1.6 + Math.random() * 2.6 * ld
+
+          // Tier-based alpha cap: focal nodes slightly more present, outer micro-glyphs fainter.
+          // Caps are gentle — hierarchy through opacity variation, not bold dark marks.
+          const alphaCap = tier === 0 ? 0.58 : tier === 1 ? 0.50 : 0.26
+          const alpha = Math.min(alphaCap,
+            (0.14 + Math.random() * 0.28) * (0.45 + ld * 0.55) * (1.0 + lf * 0.46)
+          )
+
+          // Accent: small, still subtle — just a hint of Berkeley blue in the focal zone
+          const accent = lf > 0.52 && accentRemaining > 0 && Math.random() < 0.45
+          if (accent) accentRemaining--
+
+          nodes.push({
+            nx, ny, kind, tier, size, alpha,
+            phase:  Math.random() * Math.PI * 2,
+            phaseY: Math.random() * Math.PI * 2,
+            rotation: Math.floor(Math.random() * 4),
+            drift: 0.40 + Math.random() * 0.60,
+            accent,
+          })
+        }
       }
     }
 
-    // Nearest-neighbor edges (precomputed once)
-    const buildEdges = () => {
-      edges = []
-      const edgeSet = new Set<string>()
-      for (let i = 0; i < NODE_COUNT; i++) {
-        const dists: { j: number; d: number }[] = []
-        for (let j = 0; j < NODE_COUNT; j++) {
-          if (i === j) continue
-          const dx = nodes3D[i].ox - nodes3D[j].ox
-          const dy = nodes3D[i].oy - nodes3D[j].oy
-          const dz = nodes3D[i].oz - nodes3D[j].oz
-          dists.push({ j, d: dx * dx + dy * dy + dz * dz })
-        }
-        dists.sort((a, b) => a.d - b.d)
-        for (let k = 0; k < NEIGHBORS; k++) {
-          const a = Math.min(i, dists[k].j)
-          const b = Math.max(i, dists[k].j)
-          const key = `${a}-${b}`
-          if (!edgeSet.has(key)) {
-            edgeSet.add(key)
-            edges.push({ a, b })
-          }
-        }
-      }
-    }
+    const CONN_DIST = 70
+    const CONN_DIST_SQ = CONN_DIST * CONN_DIST
 
+    const drawCorner = (x: number, y: number, arm: number, rot: number, lw: number) => {
+      ctx.lineWidth = lw
+      ctx.beginPath()
+      switch (rot % 4) {
+        case 0: ctx.moveTo(x + arm, y); ctx.lineTo(x, y); ctx.lineTo(x, y + arm); break  // TL
+        case 1: ctx.moveTo(x - arm, y); ctx.lineTo(x, y); ctx.lineTo(x, y + arm); break  // TR
+        case 2: ctx.moveTo(x - arm, y); ctx.lineTo(x, y); ctx.lineTo(x, y - arm); break  // BR
+        case 3: ctx.moveTo(x + arm, y); ctx.lineTo(x, y); ctx.lineTo(x, y - arm); break  // BL
+      }
+      ctx.stroke()
+    }
 
     const resize = () => {
       W = canvas.offsetWidth
       H = canvas.offsetHeight
-      canvas.width = W * devicePixelRatio
+      canvas.width  = W * devicePixelRatio
       canvas.height = H * devicePixelRatio
       ctx.scale(devicePixelRatio, devicePixelRatio)
     }
 
-    const project = (x: number, y: number, z: number) => {
-      const scale = FOV / (FOV + z)
-      return { sx: W * 0.5 + x * scale, sy: H * 0.5 - y * scale, scale }
-    }
-
-    const rotate = (ox: number, oy: number, oz: number) => {
-      const cosY = Math.cos(rotY), sinY = Math.sin(rotY)
-      const x = ox * cosY + oz * sinY
-      const z0 = -ox * sinY + oz * cosY
-      const cosX = Math.cos(rotX), sinX = Math.sin(rotX)
-      const y = oy * cosX - z0 * sinX
-      const z = oy * sinX + z0 * cosX
-      return { x, y, z }
-    }
-
-    const draw = (now: number) => {
-      lastTime = now
-
-      // Constant slow rotation — frame-based so focus/blur can't affect speed
-      rotY += 0.0018
-      rotX += 0.0005
-
+    const draw = () => {
       ctx.clearRect(0, 0, W, H)
+      time += 0.013
 
-      const R = Math.max(W, H) * 0.46
-
-      // Project all nodes to 2D (base positions, before spring displacement)
-      type Projected = { sx: number; sy: number; z: number; idx: number }
-      const proj: Projected[] = nodes3D.map((n, idx) => {
-        const { x, y, z } = rotate(n.ox * R, n.oy * R, n.oz * R)
-        const { sx, sy } = project(x, y, z)
-        return { sx, sy, z, idx }
-      })
-
-      // ── Spring physics ──
-      // Find up to SPRING_COUNT nearest nodes within SPRING_RADIUS
-      const mouseActive = mouse.x > -9000
-      const nearSet = new Set<number>()
-
-      if (mouseActive) {
-        const candidates: { idx: number; dist: number }[] = []
-        for (let i = 0; i < NODE_COUNT; i++) {
-          const dx = proj[i].sx - mouse.x
-          const dy = proj[i].sy - mouse.y
-          const d = Math.sqrt(dx * dx + dy * dy)
-          if (d < SPRING_RADIUS) candidates.push({ idx: i, dist: d })
-        }
-        candidates.sort((a, b) => a.dist - b.dist)
-        for (let k = 0; k < Math.min(SPRING_COUNT, candidates.length); k++) {
-          nearSet.add(candidates[k].idx)
-        }
+      const px = new Float32Array(nodes.length)
+      const py = new Float32Array(nodes.length)
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i]
+        px[i] = n.nx * W
+          + Math.sin(time * 0.80 + n.phase)        * 9.0 * n.drift
+          + Math.sin(time * 1.55 + n.phase  * 1.7) * 3.5 * n.drift
+        py[i] = n.ny * H
+          + Math.cos(time * 0.65 + n.phaseY)        * 7.0 * n.drift
+          + Math.cos(time * 1.25 + n.phaseY * 1.4)  * 2.5 * n.drift
       }
 
-      // Lerp displacements toward targets
-      for (let i = 0; i < NODE_COUNT; i++) {
-        let targetX = 0
-        let targetY = 0
-        if (nearSet.has(i)) {
-          const dx = mouse.x - proj[i].sx
-          const dy = mouse.y - proj[i].sy
-          const d = Math.max(Math.sqrt(dx * dx + dy * dy), 1)
-          const factor = Math.min(SPRING_MAX / d, 1)
-          targetX = dx * factor
-          targetY = dy * factor
+      // ── Connections: all nodes in moderate+ density, more near focal knot ──
+      for (let i = 0; i < nodes.length; i++) {
+        const ni = nodes[i]
+        if (getDensity(ni.nx, ni.ny) < 0.18) continue
+
+        const maxConn = ni.tier === 0 ? 4 : 3
+        let count = 0
+
+        for (let j = i + 1; j < nodes.length; j++) {
+          if (count >= maxConn) break
+          const nj = nodes[j]
+          if (getDensity(nj.nx, nj.ny) < 0.18) continue
+          const dx = px[i] - px[j], dy = py[i] - py[j]
+          const d2 = dx * dx + dy * dy
+          if (d2 > CONN_DIST_SQ) continue
+          const dist = Math.sqrt(d2)
+
+          const fBoost = (getFocal(ni.nx, ni.ny) + getFocal(nj.nx, nj.ny)) * 0.5
+          // Tier-0 connections read as real structure; focal zone gets extra boost
+          const localDense = Math.max(0, (getDensity(ni.nx, ni.ny) - 0.28) / 0.72)
+          const la = (1 - dist / CONN_DIST) * Math.min(ni.alpha, nj.alpha)
+            * (0.55 + fBoost * 0.55 + localDense * 0.30)
+          const isBlue = ni.accent || nj.accent
+
+          ctx.beginPath()
+          ctx.moveTo(px[i], py[i])
+          ctx.lineTo(px[j], py[j])
+          ctx.strokeStyle = isBlue
+            ? `rgba(0,40,85,${(la * 0.82).toFixed(3)})`
+            : `rgba(85,85,105,${la.toFixed(3)})`
+          ctx.lineWidth = fBoost > 0.30 ? 0.58 : localDense > 0.40 ? 0.50 : 0.40
+          ctx.stroke()
+          count++
         }
-        disp[i].x += (targetX - disp[i].x) * SPRING_LERP
-        disp[i].y += (targetY - disp[i].y) * SPRING_LERP
-      }
-
-      // Final display positions (base + spring offset)
-      const display: Projected[] = proj.map((p, i) => ({
-        ...p,
-        sx: p.sx + disp[i].x,
-        sy: p.sy + disp[i].y,
-      }))
-
-      // Painters sort by undisplaced z (back to front)
-      const sorted = [...display].sort((a, b) => a.z - b.z)
-
-      // ── Draw edges ──
-      for (const e of edges) {
-        const pa = display[e.a]
-        const pb = display[e.b]
-        const zAvg = (pa.z + pb.z) / 2
-        const depth = (zAvg + R) / (2 * R)
-        const alpha = 0.02 + depth * 0.025
-        ctx.beginPath()
-        ctx.strokeStyle = `rgba(29,29,31,${alpha.toFixed(3)})`
-        ctx.lineWidth = 0.5
-        ctx.moveTo(pa.sx, pa.sy)
-        ctx.lineTo(pb.sx, pb.sy)
-        ctx.stroke()
       }
 
       // ── Draw nodes ──
-      for (const p of sorted) {
-        const depth = (p.z + R) / (2 * R)
-        const r = depth < 0.5 ? 1 + depth : 2.5 + (depth - 0.5)
-        const alpha = 0.015 + depth * 0.22
-        ctx.beginPath()
-        ctx.strokeStyle = `rgba(29,29,31,${Math.min(alpha, 0.24).toFixed(3)})`
-        ctx.lineWidth = 0.7
-        ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2)
-        ctx.stroke()
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i]
+        const x = px[i], y = py[i]
+
+        // Only fade the extreme canvas edges — fog handles all text-area protection
+        const xf = x / W
+        const xMult = xf < 0.03 ? xf / 0.03 : 1.0
+
+        const alpha = n.alpha * xMult
+        if (alpha < 0.007) continue
+
+        // Focal-zone nodes (tier 0) get a marginally darker gray — just enough to anchor the knot
+        const col = n.accent
+          ? `rgba(0,46,96,${alpha.toFixed(3)})`
+          : n.tier === 0
+            ? `rgba(66,66,86,${alpha.toFixed(3)})`
+            : `rgba(82,82,102,${alpha.toFixed(3)})`
+
+        ctx.strokeStyle = col
+        ctx.fillStyle   = col
+
+        switch (n.kind) {
+          case 'dot':
+          case 'circle':
+            ctx.beginPath()
+            ctx.arc(x, y, n.size * 0.5, 0, Math.PI * 2)
+            ctx.fill()
+            break
+          case 'square':
+            ctx.fillRect(x - n.size * 0.5, y - n.size * 0.5, n.size, n.size)
+            break
+          case 'corner':
+            drawCorner(x, y, n.size * 0.75, n.rotation, 0.80)
+            break
+          case 'cross':
+            ctx.beginPath()
+            ctx.moveTo(x - n.size * 0.5, y); ctx.lineTo(x + n.size * 0.5, y)
+            ctx.moveTo(x, y - n.size * 0.5); ctx.lineTo(x, y + n.size * 0.5)
+            ctx.lineWidth = 0.68
+            ctx.stroke()
+            break
+        }
       }
+
+      // ── Text-area vignette ──
+      // Center (0.13, 0.45) sits inside the subtext + CTA block.
+      // High opacity held further out so the mid-range (behind heading) stays well-protected.
+      // Tiny fog only over the small subtext + CTA button area — heading bleeds freely
+      const fog = ctx.createRadialGradient(W * 0.16, H * 0.64, 0, W * 0.16, H * 0.64, W * 0.20)
+      fog.addColorStop(0,    'rgba(255,255,255,0.90)')
+      fog.addColorStop(0.45, 'rgba(255,255,255,0.40)')
+      fog.addColorStop(0.80, 'rgba(255,255,255,0.05)')
+      fog.addColorStop(1,    'rgba(255,255,255,0)')
+      ctx.fillStyle = fog
+      ctx.fillRect(0, 0, W, H)
 
       animId = requestAnimationFrame(draw)
     }
 
-    const onMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect()
-      mouse.x = e.clientX - rect.left
-      mouse.y = e.clientY - rect.top
-    }
-    const onMouseLeave = () => { mouse = { x: -9999, y: -9999 } }
-    // Reset lastTime on tab focus so dt doesn't spike after being hidden
-    const onVisibility = () => { if (!document.hidden) lastTime = performance.now() }
-
-    window.addEventListener('mousemove', onMouseMove, { passive: true })
-    document.addEventListener('mouseleave', onMouseLeave)
-    document.addEventListener('visibilitychange', onVisibility)
-
-    buildNodes()
-    buildEdges()
     resize()
-
-    lastTime = performance.now()
-    animId = requestAnimationFrame(draw)
-
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
+    animId = requestAnimationFrame(draw)
 
     return () => {
       cancelAnimationFrame(animId)
       ro.disconnect()
-      window.removeEventListener('mousemove', onMouseMove)
-      document.removeEventListener('mouseleave', onMouseLeave)
-      document.removeEventListener('visibilitychange', onVisibility)
     }
   }, [ref])
 }
@@ -253,7 +284,7 @@ function Marquee() {
         left: 0,
         right: 0,
         borderTop: '1px solid #e5e5e5',
-        height: 72,
+        height: 60,
         overflow: 'hidden',
         background: '#ffffff',
         zIndex: 12,
@@ -263,14 +294,14 @@ function Marquee() {
         {doubled.map((item, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
             <div style={{ marginRight: '2rem' }}>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 26, color: '#1d1d1f', lineHeight: 1, whiteSpace: 'nowrap' }}>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 18, color: '#3d3d3f', lineHeight: 1, whiteSpace: 'nowrap' }}>
                 {item.main}
               </div>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10, color: '#98989d', letterSpacing: '0.08em', marginTop: 4, whiteSpace: 'nowrap' }}>
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 9, color: '#b0b0b5', letterSpacing: '0.08em', marginTop: 4, whiteSpace: 'nowrap' }}>
                 {item.sub}
               </div>
             </div>
-            <span style={{ color: '#d2d2d7', fontSize: 18, marginRight: '2rem', lineHeight: 1, flexShrink: 0 }}>·</span>
+            <span style={{ color: '#d2d2d7', fontSize: 14, marginRight: '2rem', lineHeight: 1, flexShrink: 0 }}>·</span>
           </div>
         ))}
       </div>
@@ -280,7 +311,7 @@ function Marquee() {
 
 export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  useNeuralSphereCanvas(canvasRef)
+  useComputationalMesh(canvasRef)
 
   return (
     <section
@@ -294,7 +325,6 @@ export default function Hero() {
         paddingTop: 64,
       }}
     >
-      {/* Canvas contained to hero section only */}
       <canvas
         ref={canvasRef}
         style={{
@@ -308,16 +338,14 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      {/* Content */}
       <div
         style={{
           position: 'absolute',
           top: '50%',
           left: 0,
-          right: 0,
           transform: 'translateY(-54%)',
           paddingLeft: 'clamp(32px, 6.5vw, 100px)',
-          paddingRight: 'clamp(32px, 6.5vw, 100px)',
+          maxWidth: 'clamp(340px, 46vw, 520px)',
           zIndex: 10,
         }}
       >
@@ -337,17 +365,16 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* Oversized name — two stacked lines */}
+        {/* Name */}
         <h1
           style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: 900,
-            fontSize: 'clamp(56px, 9vw, 130px)',
+            fontSize: 'clamp(56px, 8vw, 118px)',
             lineHeight: 1.0,
             color: '#1d1d1f',
             letterSpacing: '-0.02em',
             marginBottom: 36,
-            width: '75vw',
           }}
         >
           {['Aryan', 'Jain'].map((word, i) => (
@@ -361,7 +388,7 @@ export default function Hero() {
           ))}
         </h1>
 
-        {/* Subtext + buttons — grouped vertically */}
+        {/* Subtext + buttons */}
         <div
           style={{
             display: 'flex',
@@ -371,7 +398,7 @@ export default function Hero() {
             animation: 'fadeInUp 0.5s ease-out 0.5s both',
           }}
         >
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 17, color: '#6e6e73', fontWeight: 400, maxWidth: 440, lineHeight: 1.65 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 17, color: '#6e6e73', fontWeight: 400, maxWidth: 380, lineHeight: 1.65 }}>
             Data Science @ UC Berkeley
           </p>
           <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
