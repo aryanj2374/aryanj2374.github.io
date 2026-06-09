@@ -33,11 +33,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   outline-offset: 3px;
 }
 
+::selection {
+  background: #1d1d1f;
+  color: #ffffff;
+}
+
 /* ── Scroll Reveal ── */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal.visible {
@@ -47,14 +54,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ── Word Fade-Up Animation ── */
 @keyframes wordFadeUp {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .word-animate {
   display: inline-block;
   opacity: 0;
-  animation: wordFadeUp 0.5s ease-out forwards;
+  animation: wordFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ── Marquee ── */
@@ -66,7 +73,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marqueeScroll 28s linear infinite;
+  animation: marqueeScroll 32s linear infinite;
+}
+
+.marquee-shell:hover .marquee-track {
+  animation-play-state: paused;
 }
 
 /* ── Subtext Fade In ── */
@@ -75,10 +86,30 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Hero Layout ── */
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-54%);
+  padding-left: clamp(32px, 6.5vw, 100px);
+  padding-right: 32px;
+  max-width: clamp(340px, 46vw, 520px);
+  z-index: 10;
+}
+
+@media (max-width: 640px) {
+  .hero-content {
+    max-width: 100%;
+    transform: translateY(-58%);
+  }
+}
+
 /* ── Pill Buttons ── */
 .btn-primary {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   padding: 0 28px;
   height: 48px;
   background: #1d1d1f;
@@ -100,6 +131,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   padding: 0 28px;
   height: 48px;
   background: transparent;
@@ -118,31 +150,64 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   color: #ffffff;
 }
 
-/* ── Nav Pill (smaller) ── */
-.btn-nav {
-  display: inline-flex;
-  align-items: center;
-  padding: 0 18px;
-  height: 36px;
-  background: #1d1d1f;
-  color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 6px;
-  border: 1px solid #1d1d1f;
-  transition: background 200ms ease;
+.btn-arrow {
+  display: inline-block;
+  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.btn-nav:hover {
-  background: #3a3a3c;
+.btn-primary:hover .btn-arrow,
+.btn-secondary:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* ── Nav ── */
+.logo-mark rect {
+  transition: fill 250ms ease;
+}
+
+.logo-mark:hover rect,
+.logo-mark:focus-visible rect {
+  fill: #003262;
+}
+
+.scroll-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #003262;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.nav-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #86868b;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: color 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: #1d1d1f;
+}
+
+.nav-link.active {
+  color: #1d1d1f;
+  font-weight: 500;
+  border-bottom-color: #003262;
 }
 
 /* ── Section Label ── */
 .section-label {
   font-family: 'Space Mono', monospace;
   font-size: 11px;
-  color: #98989d;
+  color: #86868b;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin-bottom: 24px;
@@ -158,25 +223,59 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 .project-card-new {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 36px 32px 32px;
   background: #ffffff;
   cursor: pointer;
-  transition: background 200ms ease;
+  transition: background 120ms ease;
 }
 
 .project-card-new:hover {
   background: #f5f5f7;
 }
 
+/* Blue hairline wipes across the card top on hover */
+.project-card-new::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #003262;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card-new:hover::after {
+  transform: scaleX(1);
+}
+
+/* Cards reveal individually — merge the hover + reveal transitions.
+   The stagger delay (--stagger) applies only to the reveal properties,
+   so the hover highlight stays instant on every card. */
+.project-card-new.reveal {
+  transition:
+    background 120ms ease,
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--stagger, 0s),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--stagger, 0s);
+}
+
 .card-num {
   display: block;
   font-family: 'Space Mono', monospace;
   font-size: 11px;
-  color: #98989d;
+  color: #86868b;
   letter-spacing: 0.10em;
   margin-bottom: 20px;
+  transition: color 120ms ease;
+}
+
+.project-card-new:hover .card-num {
+  color: #003262;
 }
 
 .card-title {
@@ -213,13 +312,22 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: #98989d;
-  transition: color 200ms ease;
+  color: #86868b;
+  transition: color 120ms ease;
   margin-top: auto;
+}
+
+.card-cta .cta-arrow {
+  display: inline-block;
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .project-card-new:hover .card-cta {
   color: #003262;
+}
+
+.project-card-new:hover .cta-arrow {
+  transform: translate(3px, -3px);
 }
 
 @media (max-width: 900px) {
@@ -244,9 +352,20 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   color: #6e6e73;
   white-space: nowrap;
   line-height: 1.6;
+  transition: border-color 200ms ease, color 200ms ease;
+}
+
+.tech-pill:hover {
+  border-color: #98989d;
+  color: #1d1d1f;
 }
 
 /* ── Experience Timeline ── */
+.timeline-gutter {
+  position: relative;
+  padding-left: clamp(100px, 14vw, 180px);
+}
+
 .timeline-line {
   position: absolute;
   left: 0;
@@ -254,12 +373,34 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   bottom: 0;
   width: 1px;
   background: #e5e5e5;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+}
+
+.timeline-gutter.drawn .timeline-line {
+  transform: scaleY(1);
+}
+
+/* Blue path traced down the gray line as you scroll through the section */
+.timeline-progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #003262;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 120ms linear;
 }
 
 .timeline-entry {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--stagger, 0s),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--stagger, 0s);
 }
 
 .timeline-entry.entry-visible {
@@ -268,12 +409,106 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 .timeline-node-dot {
+  position: absolute;
+  left: calc(-1 * clamp(100px, 14vw, 180px));
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  background: #c7c7cc;
+  border-radius: 50%;
+  transform-origin: center;
   transform: translateX(-3px) scale(0);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) var(--stagger, 0s),
+    background 400ms ease;
 }
 
 .timeline-entry.entry-visible .timeline-node-dot {
   transform: translateX(-3px) scale(1);
+}
+
+/* Node lights up once the traced path reaches it */
+.timeline-entry.passed .timeline-node-dot {
+  background: #003262;
+}
+
+/* Ongoing roles ("Present") get a soft live pulse once reached */
+.timeline-node-dot.live::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid #003262;
+  opacity: 0;
+}
+
+.timeline-entry.passed .timeline-node-dot.live::after {
+  animation: pulseRing 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes pulseRing {
+  0%   { transform: scale(0.35); opacity: 0.85; }
+  70%  { transform: scale(1.45); opacity: 0; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+/* Mono index, echoing the project card numbers */
+.entry-index {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #86868b;
+  letter-spacing: 0.10em;
+  margin-bottom: 8px;
+  transition: color 400ms ease;
+}
+
+.timeline-entry.passed .entry-index {
+  color: #003262;
+}
+
+.timeline-date {
+  display: block;
+  position: absolute;
+  left: calc(-1 * clamp(100px, 14vw, 180px) + 24px);
+  top: 0;
+  width: clamp(76px, 10vw, 140px);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #86868b;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 640px) {
+  .timeline-gutter {
+    padding-left: 28px;
+  }
+
+  .timeline-node-dot {
+    left: -28px;
+  }
+
+  .timeline-date {
+    position: static;
+    width: auto;
+    margin-bottom: 10px;
+  }
+}
+
+/* ── Word-Stagger Reveal (scroll-triggered, parent .reveal drives it) ── */
+.reveal-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible .reveal-word {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ── Contact Dark Section ── */
@@ -285,7 +520,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border: none;
   cursor: pointer;
   font-family: 'Space Mono', monospace;
-  font-size: 18px;
+  font-size: clamp(15px, 3.5vw, 18px);
   letter-spacing: -0.01em;
   padding-bottom: 4px;
 }
@@ -301,7 +536,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   transition: width 0.3s ease;
 }
 
-.email-dark:hover::after {
+.email-dark:hover::after,
+.email-dark:focus-visible::after {
   width: 100%;
 }
 
@@ -313,9 +549,82 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-family: 'Inter', sans-serif;
   font-size: 15px;
   color: #8e8e93;
+  transition: color 150ms ease, transform 150ms ease;
+}
+
+.contact-social-link:hover,
+.contact-social-link:focus-visible {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* ── Footer ── */
+.footer-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #8e8e93;
   transition: color 150ms ease;
 }
 
-.contact-social-link:hover {
+.footer-link:hover,
+.footer-link:focus-visible {
   color: #ffffff;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal,
+  .timeline-entry,
+  .reveal-word,
+  .reveal.visible .reveal-word {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .timeline-line,
+  .timeline-gutter.drawn .timeline-line {
+    transform: scaleY(1);
+    transition: none;
+  }
+
+  .timeline-progress {
+    transition: none;
+  }
+
+  .timeline-entry.passed .timeline-node-dot.live::after {
+    animation: none;
+  }
+
+  .project-card-new::after,
+  .logo-mark rect {
+    transition: none;
+  }
+
+  .timeline-node-dot,
+  .timeline-entry.entry-visible .timeline-node-dot {
+    transform: translateX(-3px) scale(1);
+    transition: none;
+  }
+
+  .word-animate {
+    animation: none;
+    opacity: 1;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-arrow,
+  .cta-arrow,
+  .contact-social-link {
+    transition: none;
+  }
 }

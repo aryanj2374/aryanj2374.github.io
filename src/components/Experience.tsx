@@ -3,9 +3,51 @@ import { EXPERIENCE } from '../data/portfolio'
 
 export default function Experience() {
   const entryRefs = useRef<(HTMLDivElement | null)[]>([])
+  const gutterRef = useRef<HTMLDivElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
+
+  // Trace the blue path down the line as the section scrolls past an
+  // activation point (~55% of the viewport); light up nodes it has reached.
+  useEffect(() => {
+    const gutter = gutterRef.current
+    const progress = progressRef.current
+    if (!gutter || !progress) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      progress.style.transform = 'scaleY(1)'
+      entryRefs.current.forEach(el => el?.classList.add('passed'))
+      return
+    }
+
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const rect = gutter.getBoundingClientRect()
+      const focus = window.innerHeight * 0.55
+      const p = Math.min(1, Math.max(0, (focus - rect.top) / rect.height))
+      progress.style.transform = `scaleY(${p})`
+      const reach = p * rect.height
+      entryRefs.current.forEach(el => {
+        if (!el) return
+        const dotY = el.getBoundingClientRect().top - rect.top + 10
+        el.classList.toggle('passed', dotY <= reach)
+      })
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    update()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      cancelAnimationFrame(raf)
+    }
+  }, [])
 
   useEffect(() => {
     let observer: IntersectionObserver
+    let lineObserver: IntersectionObserver
     const raf = requestAnimationFrame(() => {
       observer = new IntersectionObserver(
         (entries) => {
@@ -19,10 +61,23 @@ export default function Experience() {
         { threshold: 0.2, rootMargin: '0px 0px -60px 0px' }
       )
       entryRefs.current.forEach(el => { if (el) observer.observe(el) })
+
+      // Draw the timeline line once the section enters the viewport
+      lineObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('drawn')
+            lineObserver.unobserve(entry.target)
+          }
+        },
+        { threshold: 0.1 }
+      )
+      if (gutterRef.current) lineObserver.observe(gutterRef.current)
     })
     return () => {
       cancelAnimationFrame(raf)
       observer?.disconnect()
+      lineObserver?.disconnect()
     }
   }, [])
 
@@ -63,8 +118,9 @@ export default function Experience() {
           </p>
         </div>
 
-        <div style={{ position: 'relative', paddingLeft: 'clamp(100px, 14vw, 180px)' }}>
+        <div ref={gutterRef} className="timeline-gutter">
           <div className="timeline-line" />
+          <div ref={progressRef} className="timeline-progress" aria-hidden="true" />
 
           {EXPERIENCE.map((entry, i) => (
             <div
@@ -72,51 +128,20 @@ export default function Experience() {
               ref={el => { entryRefs.current[i] = el }}
               className="timeline-entry"
               style={{
-                transitionDelay: `${i * 0.1}s`,
+                '--stagger': `${i * 0.1}s`,
                 display: 'flex',
                 gap: 40,
                 marginBottom: i < EXPERIENCE.length - 1 ? 64 : 0,
                 position: 'relative',
-              }}
+              } as React.CSSProperties}
             >
               <div
-                className="timeline-node-dot"
-                style={{
-                  transitionDelay: `${i * 0.1}s`,
-                  position: 'absolute',
-                  left: 'calc(-1 * clamp(100px, 14vw, 180px) + 0px)',
-                  top: 6,
-                  width: 8,
-                  height: 8,
-                  background: '#1d1d1f',
-                  borderRadius: '50%',
-                  transformOrigin: 'center',
-                }}
+                className={entry.date.includes('Present') ? 'timeline-node-dot live' : 'timeline-node-dot'}
               />
 
-              <div
-                style={{
-                  position: 'absolute',
-                  left: 'calc(-1 * clamp(100px, 14vw, 180px) + 24px)',
-                  top: 0,
-                  width: 'clamp(76px, 10vw, 140px)',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: 'Space Mono, monospace',
-                    fontSize: 11,
-                    color: '#98989d',
-                    lineHeight: 1.5,
-                    display: 'block',
-                    letterSpacing: '0.02em',
-                  }}
-                >
-                  {entry.date}
-                </span>
-              </div>
-
               <div style={{ flex: 1 }}>
+                <span className="timeline-date">{entry.date}</span>
+                <span className="entry-index">{String(i + 1).padStart(2, '0')}</span>
                 <h3
                   style={{
                     fontFamily: 'Inter, sans-serif',

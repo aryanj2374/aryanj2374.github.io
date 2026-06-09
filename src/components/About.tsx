@@ -60,30 +60,28 @@ export default function About() {
             </div>
           </div>
 
-          <div className="reveal" style={{ transitionDelay: '0.12s' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
-              {allSkills.map(([category, skills]) => (
-                <div key={category}>
-                  <p
-                    style={{
-                      fontFamily: 'Space Mono, monospace',
-                      fontSize: 11,
-                      color: '#98989d',
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      marginBottom: 16,
-                    }}
-                  >
-                    {category}
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {skills.map(skill => (
-                      <span key={skill} className="tech-pill">{skill}</span>
-                    ))}
-                  </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+            {allSkills.map(([category, skills], i) => (
+              <div key={category} className="reveal" style={{ transitionDelay: `${0.12 + i * 0.1}s` }}>
+                <p
+                  style={{
+                    fontFamily: 'Space Mono, monospace',
+                    fontSize: 11,
+                    color: '#86868b',
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                    marginBottom: 16,
+                  }}
+                >
+                  {category}
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {skills.map(skill => (
+                    <span key={skill} className="tech-pill">{skill}</span>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

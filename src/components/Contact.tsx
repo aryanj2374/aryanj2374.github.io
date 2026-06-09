@@ -44,10 +44,9 @@ export default function Contact() {
       id="contact"
       style={{
         background: '#000000',
-        minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        padding: '120px clamp(32px, 6.5vw, 100px)',
+        padding: 'clamp(120px, 18vh, 200px) clamp(32px, 6.5vw, 100px)',
         textAlign: 'center',
       }}
     >
@@ -72,7 +71,14 @@ export default function Contact() {
               lineHeight: 1.0,
             }}
           >
-            Let's ship something.
+            {"Let's ship something.".split(' ').map((word, i) => (
+              <span key={i}>
+                <span className="reveal-word" style={{ transitionDelay: `${0.1 + i * 0.1}s` }}>
+                  {word}
+                </span>
+                {' '}
+              </span>
+            ))}
           </h2>
         </div>
 

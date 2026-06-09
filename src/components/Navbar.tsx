@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NAV_LINKS } from '../data/portfolio'
 
 const AJLogo = () => (
@@ -16,6 +16,7 @@ const AJLogo = () => (
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  const progressRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const sectionIds = NAV_LINKS.map(l => l.href.slice(1))
@@ -29,6 +30,12 @@ export default function Navbar() {
         if (el && el.offsetTop <= scrollY) current = id
       }
       setActiveSection(current)
+
+      const doc = document.documentElement
+      const max = doc.scrollHeight - doc.clientHeight
+      if (progressRef.current) {
+        progressRef.current.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`
+      }
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -45,9 +52,11 @@ export default function Navbar() {
         right: 0,
         zIndex: 100,
         height: 64,
-        background: '#ffffff',
+        background: scrolled ? 'rgba(255, 255, 255, 0.85)' : '#ffffff',
+        backdropFilter: scrolled ? 'blur(12px) saturate(180%)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(12px) saturate(180%)' : 'none',
         borderBottom: scrolled ? '1px solid #e5e5e5' : '1px solid transparent',
-        transition: 'border-color 300ms ease',
+        transition: 'border-color 300ms ease, background 300ms ease',
       }}
     >
       <div
@@ -61,7 +70,7 @@ export default function Navbar() {
           justifyContent: 'space-between',
         }}
       >
-        <a href="#" aria-label="Aryan Jain" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        <a href="#" aria-label="Aryan Jain" className="logo-mark" style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
           <AJLogo />
         </a>
 
@@ -72,18 +81,7 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: isActive ? 500 : 400,
-                  color: isActive ? '#1d1d1f' : '#98989d',
-                  borderBottom: isActive ? '1px solid #003262' : '1px solid transparent',
-                  paddingBottom: 2,
-                  transition: 'color 150ms ease, border-color 150ms ease',
-                  whiteSpace: 'nowrap',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#1d1d1f' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = isActive ? '#1d1d1f' : '#98989d' }}
+                className={isActive ? 'nav-link active' : 'nav-link'}
               >
                 {link.label}
               </a>
@@ -91,6 +89,8 @@ export default function Navbar() {
           })}
         </div>
       </div>
+
+      <div ref={progressRef} className="scroll-progress" aria-hidden="true" />
     </nav>
   )
 }

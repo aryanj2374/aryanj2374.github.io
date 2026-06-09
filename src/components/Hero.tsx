@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { PERSONAL_INFO } from '../data/portfolio'
 
 /* ── Computational Mesh ── */
 function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
@@ -10,9 +11,22 @@ function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
 
     let W = 0, H = 0, animId: number, time = 0
 
+    // Cursor repulsion — smoothed pointer position in canvas space
+    const PTR_R = 130, PTR_R_SQ = PTR_R * PTR_R, PTR_FORCE = 24
+    let mx = -9999, my = -9999      // raw target
+    let smx = -9999, smy = -9999    // smoothed
+    const onPointerMove = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect()
+      mx = e.clientX - r.left
+      my = e.clientY - r.top
+      if (smx < -999) { smx = mx; smy = my }  // snap on first entry, no fly-in
+    }
+    const onPointerLeave = () => { mx = -9999; my = -9999; smx = -9999; smy = -9999 }
+
     type NodeKind = 'corner' | 'square' | 'circle' | 'cross' | 'dot'
     type Node = {
       nx: number; ny: number
+      ld: number; lf: number   // precomputed density / focal at home position
       kind: NodeKind
       tier: 0 | 1 | 2   // primary / secondary / micro
       size: number; alpha: number
@@ -97,7 +111,7 @@ function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
           if (accent) accentRemaining--
 
           nodes.push({
-            nx, ny, kind, tier, size, alpha,
+            nx, ny, ld, lf, kind, tier, size, alpha,
             phase:  Math.random() * Math.PI * 2,
             phaseY: Math.random() * Math.PI * 2,
             rotation: Math.floor(Math.random() * 4),
@@ -135,6 +149,13 @@ function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
       ctx.clearRect(0, 0, W, H)
       time += 0.013
 
+      // Smooth the pointer toward its target (skip when off-canvas)
+      if (mx > -999) {
+        smx += (mx - smx) * 0.12
+        smy += (my - smy) * 0.12
+      }
+      const ptrActive = smx > -999
+
       const px = new Float32Array(nodes.length)
       const py = new Float32Array(nodes.length)
       for (let i = 0; i < nodes.length; i++) {
@@ -145,12 +166,30 @@ function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
         py[i] = n.ny * H
           + Math.cos(time * 0.65 + n.phaseY)        * 7.0 * n.drift
           + Math.cos(time * 1.25 + n.phaseY * 1.4)  * 2.5 * n.drift
+
+        // Gentle cursor repulsion — nodes ease away, connections follow
+        if (ptrActive) {
+          const dx = px[i] - smx, dy = py[i] - smy
+          const d2 = dx * dx + dy * dy
+          if (d2 < PTR_R_SQ && d2 > 0.01) {
+            const d = Math.sqrt(d2)
+            const f = (1 - d / PTR_R)
+            const push = f * f * PTR_FORCE
+            px[i] += (dx / d) * push
+            py[i] += (dy / d) * push
+          }
+        }
       }
+
+      // Narrow viewports: the text block spans the full width, so the mesh
+      // pulls back globally instead of relying on the desktop fog placement.
+      const narrow = W < 640
+      const meshMult = narrow ? 0.55 : 1.0
 
       // ── Connections: all nodes in moderate+ density, more near focal knot ──
       for (let i = 0; i < nodes.length; i++) {
         const ni = nodes[i]
-        if (getDensity(ni.nx, ni.ny) < 0.18) continue
+        if (ni.ld < 0.18) continue
 
         const maxConn = ni.tier === 0 ? 4 : 3
         let count = 0
@@ -158,17 +197,17 @@ function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
         for (let j = i + 1; j < nodes.length; j++) {
           if (count >= maxConn) break
           const nj = nodes[j]
-          if (getDensity(nj.nx, nj.ny) < 0.18) continue
+          if (nj.ld < 0.18) continue
           const dx = px[i] - px[j], dy = py[i] - py[j]
           const d2 = dx * dx + dy * dy
           if (d2 > CONN_DIST_SQ) continue
           const dist = Math.sqrt(d2)
 
-          const fBoost = (getFocal(ni.nx, ni.ny) + getFocal(nj.nx, nj.ny)) * 0.5
+          const fBoost = (ni.lf + nj.lf) * 0.5
           // Tier-0 connections read as real structure; focal zone gets extra boost
-          const localDense = Math.max(0, (getDensity(ni.nx, ni.ny) - 0.28) / 0.72)
+          const localDense = Math.max(0, (ni.ld - 0.28) / 0.72)
           const la = (1 - dist / CONN_DIST) * Math.min(ni.alpha, nj.alpha)
-            * (0.55 + fBoost * 0.55 + localDense * 0.30)
+            * (0.55 + fBoost * 0.55 + localDense * 0.30) * meshMult
           const isBlue = ni.accent || nj.accent
 
           ctx.beginPath()
@@ -192,7 +231,7 @@ function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
         const xf = x / W
         const xMult = xf < 0.03 ? xf / 0.03 : 1.0
 
-        const alpha = n.alpha * xMult
+        const alpha = n.alpha * xMult * meshMult
         if (alpha < 0.007) continue
 
         // Focal-zone nodes (tier 0) get a marginally darker gray — just enough to anchor the knot
@@ -229,28 +268,90 @@ function useComputationalMesh(ref: React.RefObject<HTMLCanvasElement | null>) {
       }
 
       // ── Text-area vignette ──
-      // Center (0.13, 0.45) sits inside the subtext + CTA block.
-      // High opacity held further out so the mid-range (behind heading) stays well-protected.
-      // Tiny fog only over the small subtext + CTA button area — heading bleeds freely
-      const fog = ctx.createRadialGradient(W * 0.16, H * 0.64, 0, W * 0.16, H * 0.64, W * 0.20)
+      // Desktop: tiny fog over the subtext + CTA block only — heading bleeds freely.
+      // Narrow: the text is full-width, so the fog recenters over the whole block.
+      const fogX = narrow ? W * 0.42 : W * 0.16
+      const fogY = narrow ? H * 0.50 : H * 0.64
+      const fogR = narrow ? W * 0.62 : W * 0.20
+      const fog = ctx.createRadialGradient(fogX, fogY, 0, fogX, fogY, fogR)
       fog.addColorStop(0,    'rgba(255,255,255,0.90)')
       fog.addColorStop(0.45, 'rgba(255,255,255,0.40)')
       fog.addColorStop(0.80, 'rgba(255,255,255,0.05)')
       fog.addColorStop(1,    'rgba(255,255,255,0)')
       ctx.fillStyle = fog
       ctx.fillRect(0, 0, W, H)
+    }
 
-      animId = requestAnimationFrame(draw)
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let running = true
+
+    // Pointer tracking on the section (canvas is pointer-events: none)
+    const host = canvas.parentElement
+    if (!reducedMotion && host && window.matchMedia('(hover: hover)').matches) {
+      host.addEventListener('pointermove', onPointerMove, { passive: true })
+      host.addEventListener('pointerleave', onPointerLeave, { passive: true })
+    }
+
+    const loop = () => {
+      draw()
+      if (running && !reducedMotion) animId = requestAnimationFrame(loop)
     }
 
     resize()
-    const ro = new ResizeObserver(resize)
+    const ro = new ResizeObserver(() => {
+      resize()
+      if (reducedMotion) draw()  // keep the static frame in sync
+    })
     ro.observe(canvas)
-    animId = requestAnimationFrame(draw)
+
+    // Pause the loop while the hero is scrolled out of view
+    const io = new IntersectionObserver(([entry]) => {
+      const visible = entry.isIntersecting
+      if (visible && !running) {
+        running = true
+        if (!reducedMotion) animId = requestAnimationFrame(loop)
+      } else if (!visible && running) {
+        running = false
+        cancelAnimationFrame(animId)
+      }
+    })
+    io.observe(canvas)
+
+    animId = requestAnimationFrame(loop)
 
     return () => {
       cancelAnimationFrame(animId)
       ro.disconnect()
+      io.disconnect()
+      host?.removeEventListener('pointermove', onPointerMove)
+      host?.removeEventListener('pointerleave', onPointerLeave)
+    }
+  }, [ref])
+}
+
+/* ── Parallax fade-out as the hero scrolls away ── */
+function useHeroParallax(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let raf = 0
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        const el = ref.current
+        if (!el) return
+        const y = window.scrollY
+        const vh = window.innerHeight
+        if (y <= vh) {
+          el.style.transform = `translateY(${y * 0.18}px)`
+          el.style.opacity = `${Math.max(0, 1 - y / (vh * 0.6))}`
+        }
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(raf)
     }
   }, [ref])
 }
@@ -278,6 +379,7 @@ function Marquee() {
   const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS]
   return (
     <div
+      className="marquee-shell"
       style={{
         position: 'absolute',
         bottom: 0,
@@ -297,7 +399,7 @@ function Marquee() {
               <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 18, color: '#3d3d3f', lineHeight: 1, whiteSpace: 'nowrap' }}>
                 {item.main}
               </div>
-              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 9, color: '#b0b0b5', letterSpacing: '0.08em', marginTop: 4, whiteSpace: 'nowrap' }}>
+              <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 10, color: '#86868b', letterSpacing: '0.08em', marginTop: 4, whiteSpace: 'nowrap' }}>
                 {item.sub}
               </div>
             </div>
@@ -311,7 +413,9 @@ function Marquee() {
 
 export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const parallaxRef = useRef<HTMLDivElement>(null)
   useComputationalMesh(canvasRef)
+  useHeroParallax(parallaxRef)
 
   return (
     <section
@@ -338,17 +442,8 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: 0,
-          transform: 'translateY(-54%)',
-          paddingLeft: 'clamp(32px, 6.5vw, 100px)',
-          maxWidth: 'clamp(340px, 46vw, 520px)',
-          zIndex: 10,
-        }}
-      >
+      <div className="hero-content">
+        <div ref={parallaxRef}>
         {/* Label row */}
         <div
           style={{
@@ -360,8 +455,8 @@ export default function Hero() {
           }}
         >
           <div style={{ width: 40, height: 1, background: '#d2d2d7', flexShrink: 0 }} />
-          <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: '#98989d', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-            Developer &amp; Researcher
+          <span style={{ fontFamily: 'Space Mono, monospace', fontSize: 11, color: '#86868b', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+            Data Science @ UC Berkeley
           </span>
         </div>
 
@@ -399,12 +494,13 @@ export default function Hero() {
           }}
         >
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 17, color: '#6e6e73', fontWeight: 400, maxWidth: 380, lineHeight: 1.65 }}>
-            Data Science @ UC Berkeley
+            {PERSONAL_INFO.tagline}
           </p>
           <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-            <a href="#projects" className="btn-primary">View work →</a>
+            <a href="#projects" className="btn-primary">View work <span className="btn-arrow">→</span></a>
             <a href="#contact" className="btn-secondary">Get in touch</a>
           </div>
+        </div>
         </div>
       </div>
 

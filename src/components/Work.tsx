@@ -29,14 +29,15 @@ export default function Work() {
         </div>
 
         {/* Card grid */}
-        <div className="project-card-grid reveal" style={{ transitionDelay: '0.1s' }}>
+        <div className="project-card-grid">
           {PROJECTS.map((project, i) => (
             <a
               key={i}
               href={project.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="project-card-new"
+              className="project-card-new reveal"
+              style={{ '--stagger': `${0.08 + i * 0.1}s` } as React.CSSProperties}
             >
               {/* Number */}
               <span className="card-num">{project.num}</span>
@@ -55,7 +56,7 @@ export default function Work() {
               <p className="card-desc">{project.description}</p>
 
               {/* CTA */}
-              <div className="card-cta">View repo ↗</div>
+              <div className="card-cta">View repo <span className="cta-arrow">↗</span></div>
             </a>
           ))}
         </div>

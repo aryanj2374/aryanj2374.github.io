@@ -11,6 +11,7 @@ export default function Footer() {
     <footer
       style={{
         background: '#000000',
+        borderTop: '1px solid #1c1c1e',
         height: 80,
         display: 'flex',
         alignItems: 'center',
@@ -22,7 +23,7 @@ export default function Footer() {
         style={{
           fontFamily: 'Space Mono, monospace',
           fontSize: 12,
-          color: '#9a9a9a',
+          color: '#8e8e93',
         }}
       >
         © {new Date().getFullYear()} Aryan Jain
@@ -35,14 +36,7 @@ export default function Footer() {
             href={href}
             target={href.startsWith('mailto') ? undefined : '_blank'}
             rel="noopener noreferrer"
-            style={{
-              fontFamily: 'Space Mono, monospace',
-              fontSize: 12,
-              color: '#9a9a9a',
-              transition: 'color 150ms ease',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#ffffff' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#9a9a9a' }}
+            className="footer-link"
           >
             {label}
           </a>
