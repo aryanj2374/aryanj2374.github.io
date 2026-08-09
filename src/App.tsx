@@ -8,7 +8,6 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 
 export default function App() {
-  // Global scroll reveal
   useEffect(() => {
     let observer: IntersectionObserver
 
@@ -22,7 +21,7 @@ export default function App() {
             }
           })
         },
-        { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+        { threshold: 0.08, rootMargin: '0px 0px -56px 0px' }
       )
       document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
     }
@@ -36,8 +35,9 @@ export default function App() {
 
   return (
     <>
+      <a className="skip-link" href="#main">Skip to content</a>
       <Navbar />
-      <main>
+      <main id="main">
         <Hero />
         <Experience />
         <Work />

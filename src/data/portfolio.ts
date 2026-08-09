@@ -2,7 +2,7 @@ export const PERSONAL_INFO = {
   name: 'Aryan Jain',
   nameShort: 'AJ',
   title: 'Data Science @ UC Berkeley',
-  tagline: 'Building intelligent systems at the intersection of AI and software engineering.',
+  tagline: 'I turn ambitious AI ideas into systems you can actually use — from multi-agent research tools to production ML infrastructure.',
   email: 'aryanj@berkeley.edu',
   github: 'https://github.com/aryanj2374',
   linkedin: 'https://linkedin.com/in/aryanjain0',
@@ -18,8 +18,11 @@ export const NAV_LINKS = [
 export interface Project {
   num: string
   title: string
+  eyebrow: string
+  headline: string
   tags: string[]
   description: string
+  signals: { value: string; label: string }[]
   link: string
 }
 
@@ -27,25 +30,46 @@ export const PROJECTS: Project[] = [
   {
     num: '01',
     title: 'OpenTix',
+    eyebrow: 'On-chain ticketing',
+    headline: 'A ticket you can verify, own, and resell — without the scalper tax.',
     tags: ['React', 'Vite', 'Express.js', 'MongoDB', 'XRPL', 'xrpl.js', 'JWT'],
     description:
       "Full-stack NFT ticketing platform on the XRP Ledger. Tickets mint as XLS-20 NFTs with native XRP payments, enforced resale price caps, and automatic creator royalties settled at the protocol level via XRPL's TransferFee.",
+    signals: [
+      { value: 'XLS-20', label: 'NFT standard' },
+      { value: 'Native', label: 'XRP settlement' },
+      { value: 'Capped', label: 'resale pricing' },
+    ],
     link: 'https://github.com/aryanj2374/babhacks',
   },
   {
     num: '02',
     title: 'Multi-Agent Research Assistant',
+    eyebrow: 'Agentic research',
+    headline: 'One question in. A source-tracked research brief out.',
     tags: ['Python', 'FastAPI', 'asyncio', 'HuggingFace', 'React', 'TypeScript'],
     description:
       'Multi-agent system using Semantic Scholar API to generate comprehensive research overviews with key insights, bias analysis, and source tracking.',
+    signals: [
+      { value: '4', label: 'specialist agents' },
+      { value: 'Async', label: 'parallel pipeline' },
+      { value: 'Cited', label: 'every insight' },
+    ],
     link: 'https://github.com/aryanj2374/MultiAgentResearcher',
   },
   {
     num: '03',
     title: 'Calsquared',
+    eyebrow: 'Calendar intelligence',
+    headline: 'The calendar that reads the emails you forgot to turn into events.',
     tags: ['Python', 'FastAPI', 'React', 'Google Calendar API', 'Gmail API', 'LLM'],
     description:
       'Agentic calendar assistant that ingests course schedules, syncs to Google Calendar, and scans Gmail for events. Natural-language chat interface for scheduling, with automatic email-to-event extraction and a FastAPI backend.',
+    signals: [
+      { value: '2-way', label: 'calendar sync' },
+      { value: 'LLM', label: 'event extraction' },
+      { value: 'Chat', label: 'scheduling UI' },
+    ],
     link: 'https://github.com/aryanj2374/Calhacks12.0',
   },
 ]

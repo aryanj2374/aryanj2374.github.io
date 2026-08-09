@@ -1,11 +1,12 @@
 # Aryan Jain Portfolio
 
-Personal portfolio site built with React + Vite. Focused on a clean, high-contrast glassmorphism aesthetic with a data‑constellation hero, featured projects, and streamlined navigation.
+Personal portfolio site built with React + Vite. The site uses an editorial systems-lab aesthetic, kinetic typography, interactive career navigation, and animated product visualizations for each featured project.
 
 ## Tech Stack
 - React
 - Vite
-- CSS (custom design system)
+- TypeScript
+- CSS (custom motion and design system)
 
 ## Local Development
 ```bash
@@ -19,5 +20,5 @@ npm run build
 ```
 
 ## Notes
-- Resume PDF lives in `public/AryanJainResume.pdf`.
-- Entry point: `src/App.jsx`
+- Portfolio content lives in `src/data/portfolio.ts`.
+- Entry point: `src/main.tsx`.
