@@ -2,31 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      if (window.location.protocol === 'file:' && !window.location.pathname.includes('/dist/')) {
+        window.location.replace(new URL('./dist/index.html', window.location.href).href)
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Aryan Jain is a UC Berkeley data scientist and software engineer building AI agents, production ML infrastructure, and research systems." />
     <meta name="keywords" content="Aryan Jain, Data Science, UC Berkeley, AI, Machine Learning, Software Engineer, Multi-Agent" />
     <meta name="author" content="Aryan Jain" />
-    <meta property="og:title" content="Aryan Jain — Intelligent systems that ship" />
-    <meta property="og:description" content="AI agents, production ML, research systems, and the engineering that makes them real." />
+    <meta property="og:title" content="Aryan Jain | Data Science & Software Engineering" />
+    <meta property="og:description" content="UC Berkeley Data Science student building AI tools, machine learning systems, and research software." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://aryanj2374.github.io/" />
-    <meta property="og:image" content="https://aryanj2374.github.io/og.png" />
-    <meta property="og:image:width" content="1731" />
-    <meta property="og:image:height" content="909" />
-    <meta property="og:image:alt" content="Aryan Jain — Intelligent systems that ship" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Aryan Jain — Intelligent systems that ship" />
-    <meta name="twitter:description" content="AI agents, production ML, research systems, and the engineering that makes them real." />
-    <meta name="twitter:image" content="https://aryanj2374.github.io/og.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Aryan Jain | Data Science & Software Engineering" />
+    <meta name="twitter:description" content="UC Berkeley Data Science student building AI tools, machine learning systems, and research software." />
     <meta name="theme-color" content="#090b0f" />
-    <title>Aryan Jain — Intelligent systems that ship</title>
+    <title>Aryan Jain | Data Science & Software Engineering</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

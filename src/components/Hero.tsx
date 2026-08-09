@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react'
 import { PERSONAL_INFO } from '../data/portfolio'
 
 const SYSTEM_NODES = [
-  { label: 'reason', className: 'node-reason' },
+  { label: 'research', className: 'node-reason' },
   { label: 'build', className: 'node-build' },
-  { label: 'verify', className: 'node-verify' },
-  { label: 'ship', className: 'node-ship' },
+  { label: 'test', className: 'node-verify' },
+  { label: 'deploy', className: 'node-ship' },
 ]
 
 export default function Hero() {
@@ -40,45 +40,34 @@ export default function Hero() {
       <div className="hero-layout page-shell">
         <div className="hero-copy">
           <div className="hero-kicker intro-enter">
-            <span className="status-dot" aria-hidden="true" />
             <span>Data Science @ UC Berkeley</span>
-            <span className="kicker-divider" />
-            <span>Building now</span>
           </div>
 
-          <h1 className="hero-title" aria-label="I build intelligent systems that ship">
-            <span className="title-line title-line-one">I build</span>
-            <span className="title-line title-line-two">intelligent</span>
-            <span className="title-line title-line-three">
-              systems that <span className="title-accent">ship.</span>
-            </span>
+          <h1 className="hero-title" aria-label="Aryan Jain">
+            <span className="title-line title-line-one">Aryan Jain</span>
           </h1>
 
           <div className="hero-bottom intro-enter intro-enter-late">
             <p>{PERSONAL_INFO.tagline}</p>
             <div className="hero-actions">
               <a className="button button-bright" href="#projects">
-                Explore the work <span aria-hidden="true">↘</span>
+                View projects <span aria-hidden="true">↘</span>
               </a>
               <a className="text-link" href={`mailto:${PERSONAL_INFO.email}`}>
-                Start a conversation <span aria-hidden="true">↗</span>
+                Email me <span aria-hidden="true">↗</span>
               </a>
             </div>
           </div>
         </div>
 
         <div className="system-stage intro-enter intro-enter-visual" aria-hidden="true">
-          <div className="stage-chrome">
-            <span>AJ / SYSTEMS LAB</span>
-            <span className="stage-live"><i /> LIVE</span>
-          </div>
           <div className="orbit orbit-outer" />
           <div className="orbit orbit-middle" />
           <div className="orbit orbit-inner" />
           <div className="system-core">
-            <span>idea</span>
+            <span>data</span>
             <strong>→</strong>
-            <span>system</span>
+            <span>software</span>
           </div>
           {SYSTEM_NODES.map((node, index) => (
             <div className={`system-node ${node.className}`} key={node.label}>
@@ -86,16 +75,18 @@ export default function Hero() {
               {node.label}
             </div>
           ))}
-          <div className="signal-trace trace-one" />
-          <div className="signal-trace trace-two" />
-          <div className="stage-readout readout-top">latency / 42ms</div>
-          <div className="stage-readout readout-bottom">confidence / 98.4%</div>
+          <div className="signal-trace trace-research" />
+          <div className="signal-trace trace-build" />
+          <div className="signal-trace trace-test" />
+          <div className="signal-trace trace-deploy" />
+          <div className="stage-readout readout-top">Berkeley, California</div>
+          <div className="stage-readout readout-bottom">Python / TypeScript</div>
         </div>
       </div>
 
       <div className="hero-ticker" aria-hidden="true">
         <div className="ticker-track">
-          {[0, 1].map(copy => (
+          {[0, 1, 2].map(copy => (
             <div className="ticker-set" key={copy}>
               <span>AI AGENTS</span><i>✦</i>
               <span>PRODUCTION ML</span><i>✦</i>

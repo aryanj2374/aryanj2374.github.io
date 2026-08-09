@@ -9,8 +9,8 @@ export default function Experience() {
     <section className="experience-section" id="experience">
       <div className="page-shell">
         <header className="section-head experience-head reveal">
-          <div><span className="eyebrow">EXPERIENCE LOG</span><span className="section-count">/ 05</span></div>
-          <h2>From research questions<br />to production systems.</h2>
+          <div><span className="eyebrow">EXPERIENCE</span><span className="section-count">/ {String(EXPERIENCE.length).padStart(2, '0')}</span></div>
+          <h2>Software engineering<br />and research.</h2>
         </header>
 
         <div className="experience-console reveal">
@@ -40,7 +40,7 @@ export default function Experience() {
             role="tabpanel"
           >
             <div className="panel-meta">
-              <span>{current.date.includes('Present') ? '● CURRENTLY BUILDING' : '● ARCHIVED'}</span>
+              <span>{current.date.includes('Present') ? '● CURRENT ROLE' : '● PREVIOUS ROLE'}</span>
               <span>ENTRY {String(active + 1).padStart(2, '0')} / {String(EXPERIENCE.length).padStart(2, '0')}</span>
             </div>
             <h3>{current.role}</h3>

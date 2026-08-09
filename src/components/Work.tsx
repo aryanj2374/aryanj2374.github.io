@@ -25,21 +25,45 @@ function TicketVisual() {
 }
 
 function ResearchVisual() {
+  const agents = [
+    ['01', 'Planner', 'Creates subquestions'],
+    ['02', 'Retriever', 'Finds papers'],
+    ['03', 'Extractor', 'Collects evidence'],
+    ['04', 'Critic', 'Reviews quality'],
+    ['05', 'Synthesizer', 'Builds conclusions'],
+    ['06', 'Referee', 'Checks citations'],
+  ]
+
   return (
     <div className="project-visual research-visual" aria-hidden="true">
       <div className="visual-grid" />
-      <div className="visual-topline"><span>RESEARCH / RUN_028</span><span className="visual-status amber">● SYNTHESIZING</span></div>
-      <div className="query-card"><span>QUERY</span><p>How do multi-agent systems improve scientific discovery?</p></div>
-      <div className="agent-network">
-        <div className="agent-node agent-center"><span>ORCHESTRATOR</span><strong>01</strong></div>
-        <div className="agent-node agent-search"><span>SEARCH</span><strong>02</strong></div>
-        <div className="agent-node agent-read"><span>ANALYZE</span><strong>03</strong></div>
-        <div className="agent-node agent-check"><span>VERIFY</span><strong>04</strong></div>
-        <div className="network-line line-a"><i /></div>
-        <div className="network-line line-b"><i /></div>
-        <div className="network-line line-c"><i /></div>
+      <div className="visual-topline"><span>RESEARCH / PIPELINE</span><span className="visual-status amber">● ACTIVE</span></div>
+      <div className="research-query">
+        <div><span>RESEARCH QUESTION</span><p>How do multi-agent systems improve scientific discovery?</p></div>
+        <strong>24 PAPERS</strong>
       </div>
-      <div className="source-stack"><span>SOURCES</span><i /><i /><i /><strong>24</strong></div>
+      <div className="research-pipeline">
+        <div className="pipeline-track"><i /></div>
+        {agents.map(([number, name, task], index) => (
+          <div
+            className="research-step"
+            style={{
+              '--reveal-delay': `${index * 90 + 180}ms`,
+              '--activity-delay': `${index * 1.15 + 1.1}s`,
+            } as React.CSSProperties}
+            key={name}
+          >
+            <div><span>{number}</span><i><b />READY</i></div>
+            <strong>{name}</strong>
+            <small>{task}</small>
+          </div>
+        ))}
+      </div>
+      <div className="research-output">
+        <div><span>FINAL BRIEF</span><strong>8 citation-grounded findings</strong></div>
+        <div className="output-bars"><i /><i /><i /><i /></div>
+        <span>SCHEMA VALID</span>
+      </div>
     </div>
   )
 }
@@ -52,15 +76,23 @@ function CalendarVisual() {
       <div className="calendar-shell">
         <div className="calendar-times"><span>9</span><span>11</span><span>1</span><span>3</span></div>
         {days.map((day, index) => (
-          <div className="calendar-day" key={day}><strong>{day}</strong>{index === 0 && <i className="cal-event event-blue">DATA 100</i>}{index === 2 && <i className="cal-event event-green">LAB</i>}{index === 4 && <i className="cal-event event-purple">DEMO</i>}</div>
+          <div className="calendar-day" key={day}><strong>{day}</strong>{index === 0 && <i className="cal-event event-blue">DATA 100</i>}{index === 2 && <i className="cal-event event-green">LAB</i>}{index === 4 && <i className="cal-event event-purple">SYNC 3 PM</i>}</div>
         ))}
       </div>
-      <div className="email-card">
-        <div className="email-icon">@</div>
-        <div><span>NEW EMAIL DETECTED</span><strong>Project sync · Friday 3 PM</strong></div>
-        <i>→</i>
+      <div className="calendar-activity">
+        <div className="email-stage">
+          <div className="email-card email-arrival">
+            <div className="email-icon">@</div>
+            <div><span>NEW EMAIL</span><strong>Project sync details received</strong></div>
+          </div>
+          <div className="email-card email-detected">
+            <div className="email-icon">✓</div>
+            <div><span>EMAIL DETECTED</span><strong>Project sync · Friday 3 PM</strong></div>
+          </div>
+        </div>
+        <i className="activity-arrow">→</i>
+        <div className="created-toast"><span>✓</span><div><strong>Event created</strong><small>Google Calendar</small></div></div>
       </div>
-      <div className="created-toast"><span>✓</span><div><strong>Event created</strong><small>Google Calendar</small></div></div>
     </div>
   )
 }
@@ -93,9 +125,9 @@ export default function Work() {
     <section className="work-section" id="projects">
       <div className="page-shell">
         <header className="section-head reveal">
-          <div><span className="eyebrow">SELECTED SYSTEMS</span><span className="section-count">/ 03</span></div>
-          <h2>Projects, explained<br />by how they move.</h2>
-          <p>Not just repository cards. These are small windows into the products, pipelines, and decisions behind the code.</p>
+          <div><span className="eyebrow">PROJECTS</span><span className="section-count">/ 03</span></div>
+          <h2>Selected projects.</h2>
+          <p>A closer look at the products, system architecture, and technical decisions behind each project.</p>
         </header>
         <div className="project-list">
           {PROJECTS.map((project, index) => <ProjectStory project={project} index={index} key={project.title} />)}

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/prepare-sites.mjs",
+    "build": "tsc -b && vite build && node scripts/inline-static-build.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

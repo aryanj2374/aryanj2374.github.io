@@ -19,9 +19,9 @@ export default function Contact() {
       <div className="contact-orbit orbit-a" aria-hidden="true" />
       <div className="contact-orbit orbit-b" aria-hidden="true" />
       <div className="page-shell contact-inner reveal">
-        <span className="eyebrow">OPEN CHANNEL</span>
-        <h2>Have a hard problem?<br /><em>I’m listening.</em></h2>
-        <p>Open to engineering roles, research collaborations, and ambitious ideas that deserve to exist.</p>
+        <span className="eyebrow">CONTACT</span>
+        <h2>Get in touch.</h2>
+        <p>I’m open to software engineering roles, research collaborations, and conversations about my work.</p>
         <div className="contact-actions">
           <a className="contact-email" href={`mailto:${PERSONAL_INFO.email}`}>{PERSONAL_INFO.email}<span>↗</span></a>
           <button className="copy-button" onClick={copyEmail}>{copied ? 'COPIED ✓' : 'COPY EMAIL'}</button>
@@ -32,7 +32,6 @@ export default function Contact() {
           <span>Berkeley, California</span>
         </div>
       </div>
-      <div className="contact-marquee" aria-hidden="true"><span>LET’S BUILD SOMETHING THAT MOVES ✦ LET’S BUILD SOMETHING THAT MOVES ✦&nbsp;</span><span>LET’S BUILD SOMETHING THAT MOVES ✦ LET’S BUILD SOMETHING THAT MOVES ✦&nbsp;</span></div>
     </section>
   )
 }

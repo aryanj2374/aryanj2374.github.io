@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="page-shell">
         <span>© {new Date().getFullYear()} ARYAN JAIN</span>
         <a href="#hero">BACK TO TOP ↑</a>
-        <span>DESIGNED + BUILT WITH INTENT</span>
+        <span>BERKELEY, CA</span>
       </div>
     </footer>
   )
