@@ -125,7 +125,7 @@ export default function Work() {
     <section className="work-section" id="projects">
       <div className="page-shell">
         <header className="section-head reveal">
-          <div><span className="eyebrow">PROJECTS</span><span className="section-count">/ 03</span></div>
+          <div><span className="eyebrow">PROJECTS</span></div>
           <h2>Selected projects.</h2>
           <p>A closer look at the products, system architecture, and technical decisions behind each project.</p>
         </header>

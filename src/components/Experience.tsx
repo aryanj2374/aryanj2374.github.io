@@ -9,7 +9,7 @@ export default function Experience() {
     <section className="experience-section" id="experience">
       <div className="page-shell">
         <header className="section-head experience-head reveal">
-          <div><span className="eyebrow">EXPERIENCE</span><span className="section-count">/ {String(EXPERIENCE.length).padStart(2, '0')}</span></div>
+          <div><span className="eyebrow">EXPERIENCE</span></div>
           <h2>Software engineering<br />and research.</h2>
         </header>
 
